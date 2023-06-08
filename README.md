@@ -1,0 +1,1 @@
+# conventional-precommit-linter
