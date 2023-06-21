@@ -10,11 +10,10 @@ To use the Conventional Precommit Linter Hook in your project, add the following
 
 ```yaml
 - repo: https://github.com/espressif/conventional-precommit-linter
-  rev: v1.0.0-pre
+  rev: v1.0.0
   hooks:
     - id: conventional-precommit-linter
       stages: [commit-msg]
-      args: []
 ```
 
 Once this configuration is added, the Conventional Precommit Linter Hook will be included in the checks that the [pre-commit](https://pre-commit.com/) framework runs.
@@ -31,15 +30,17 @@ The script supports additional parameters to customize its behavior:
 
 - `--body-max-line-length`: Maximum length of a line in the commit message body. Defaults to `100`.
 
-You can modify these parameters by adding them to the `args` array in the `.pre-commit-config.yaml` file. For example, to change the `--subject-min-length` to `10`, your configuration would look like this:
+You can modify these parameters by adding them to the `args` array in the `.pre-commit-config.yaml` file. For example, to change the `--subject-min-length` to `10` and add a new type `fox`, your configuration would look like this:
 
 ```yaml
 - repo: https://github.com/espressif/conventional-precommit-linter
-  rev: v1.0.0-pre
+  rev: v1.0.0
   hooks:
     - id: conventional-precommit-linter
       stages: [commit-msg]
-      args: ["--subject-min-length=10"]
+      args:
+        - --types=change,ci,docs,feat,fix,refactor,remove,revert,fox
+        - --subject-min-length=10
 ```
 
 ## Commit Message Structure
