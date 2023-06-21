@@ -1,0 +1,7 @@
+- id: conventional-precommit-linter
+  name: Conventional Commit
+  entry: conventional-precommit-linter
+  language: python
+  description: Checks commit message for Conventional Commits formatting
+  always_run: true
+  stages: [commit-msg]
