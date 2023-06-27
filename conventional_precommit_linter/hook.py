@@ -26,10 +26,13 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
         '--subject-min-length', type=int, default=20, help="Minimum length of the 'Summary' field in commit message"
     )
     parser.add_argument(
-        '--subject-max-length', type=int, default=50, help="Maximum length of the 'Summary' field in commit message"
+        '--subject-max-length', type=int, default=72, help="Maximum length of the 'Summary' field in commit message"
     )
     parser.add_argument(
         '--body-max-line-length', type=int, default=100, help='Maximum length of the line in message body'
+    )
+    parser.add_argument(
+        '--summary-uppercase', action='store_true', help='Summary must start with an uppercase letter'
     )
     parser.add_argument('input', type=str, help='A file containing a git commit message')
     return parser.parse_args(argv)
@@ -58,7 +61,6 @@ def raise_error(message: str, error: str, types: str, args: argparse.Namespace) 
     commit message rules:
         - use one of the following types: [{types}]
         - 'scope/component' is optional, but if used, it must start with a lowercase letter
-        - 'summary' must start with a capital letter
         - 'summary' must not end with a period
         - 'summary' must be between {args.subject_min_length} and {args.subject_max_length} characters long
         - 'body' is optional, but if used, lines must be no longer than {args.body_max_line_length} characters
@@ -72,7 +74,7 @@ def raise_error(message: str, error: str, types: str, args: argparse.Namespace) 
         ...
 
     Example of a good commit message (without scope and body):
-        ci: Added target test job for ESP32-Wifi6
+        ci: added target test job for ESP32-Wifi6
 
         ...
     """
@@ -135,7 +137,7 @@ def parse_commit_message(args: argparse.Namespace, input_commit_message: str) ->
         raise_error(message_title, error, types, args)
 
     # Check if the 'summary' starts with a lowercase letter
-    if commit_summary[0].islower():
+    if args.summary_uppercase and commit_summary[0].islower():
         raise_error(message_title, ERROR_SUMMARY_CAPITALIZATION, types, args)
 
     # Check if the 'summary' ends with a period (full stop)
