@@ -30,6 +30,8 @@ The script supports additional parameters to customize its behavior:
 
 - `--body-max-line-length`: Maximum length of a line in the commit message body. Defaults to `100`.
 
+- `--summary-uppercase`: Summary must start with an uppercase letter. If not specified, the default is `false` (uppercase not required).
+
 You can modify these parameters by adding them to the `args` array in the `.pre-commit-config.yaml` file. For example, to change the `--subject-min-length` to `10` and add a new type `fox`, your configuration would look like this:
 
 ```yaml
@@ -59,9 +61,9 @@ Where:
 
 - `<scope/component>` (optional): the scope or component that the commit pertains to. It should start with a lowercase letter.
 
-- `<Summary>`: a short, concise description of the change. It should start with a capital letter, not end with a period, and be between `subject_min_length` and `subject_max_length` characters long (as specified by script parameters).
+- `<summary>`: a short, concise description of the change. It should not end with a period, and be between `subject_min_length` and `subject_max_length` characters long (as specified by script parameters). If the `--summary-uppercase` flag is used, then the summary must start with a uppercase letter.
 
-- `<Body>` (optional): a detailed description of the change. Each line should be no longer than `body_max_line_length` characters (as specified by script parameters). There should be one blank line between the summary and the body.
+- `<body>` (optional): a detailed description of the change. Each line should be no longer than `body_max_line_length` characters (as specified by script parameters). There should be one blank line between the summary and the body.
 
 Examples:
 
@@ -72,7 +74,7 @@ This is a detailed description of the commit message body ...
 
 ...
 
-ci: Added target test job for ESP32-Wifi6
+ci: added target test job for ESP32-Wifi6
 
 ...
 ```

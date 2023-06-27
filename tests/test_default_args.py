@@ -7,32 +7,16 @@ from conventional_precommit_linter.hook import ERROR_BODY_LENGTH
 from conventional_precommit_linter.hook import ERROR_EMPTY_MESSAGE
 from conventional_precommit_linter.hook import ERROR_MISSING_COLON
 from conventional_precommit_linter.hook import ERROR_SCOPE_CAPITALIZATION
-from conventional_precommit_linter.hook import ERROR_SUMMARY_CAPITALIZATION
 from conventional_precommit_linter.hook import ERROR_SUMMARY_LENGTH
 from conventional_precommit_linter.hook import ERROR_SUMMARY_PERIOD
 from conventional_precommit_linter.hook import ERROR_TYPE
 from conventional_precommit_linter.hook import main
 
-# Input arguments
-TYPES = 'change, ci, docs, feat, fix, refactor, remove, revert, fox'
+# DEFAULT input arguments
+TYPES = 'change, ci, docs, feat, fix, refactor, remove, revert'
 SUBJECT_MIN_LENGTH = 20
-SUBJECT_MAX_LENGTH = 50
+SUBJECT_MAX_LENGTH = 72
 BODY_MAX_LINE_LENGTH = 100
-
-
-# Fixture for arguments
-@pytest.fixture(
-    params=[
-        {
-            'types': TYPES.replace(', ', ','),
-            'subject-min-length': str(SUBJECT_MIN_LENGTH),
-            'subject-max-length': str(SUBJECT_MAX_LENGTH),
-            'body-max-line-length': str(BODY_MAX_LINE_LENGTH),
-        }
-    ]
-)
-def args(request):
-    return request.param
 
 
 # Fixture for messages
@@ -69,8 +53,8 @@ def args(request):
             None,
         ),
         (
-            # Expected PASS: Test of additional types
-            'fox(esp32): Testing additional types\n\nThis is a text of body',
+            # Expected PASS: 'summary' starts with lowercase
+            'change(rom): this message starts with lowercase',
             True,
             None,
         ),
@@ -88,7 +72,7 @@ def args(request):
         ),
         (
             # Expected FAIL: 'summary' too long
-            'change(rom): Refactor authentication flow for enhanced security measures',
+            'change(rom): Refactor authentication flow for enhanced security measures and improved user experience',  # noqa: E501
             False,
             ERROR_SUMMARY_LENGTH.format(SUBJECT_MIN_LENGTH, SUBJECT_MAX_LENGTH),
         ),
@@ -97,12 +81,6 @@ def args(request):
             'change(rom): Fixed the another bug.',
             False,
             ERROR_SUMMARY_PERIOD,
-        ),
-        (
-            # Expected FAIL: 'summary' starts with lowercase
-            'change(rom): this message starts with lowercase',
-            False,
-            ERROR_SUMMARY_CAPITALIZATION,
         ),
         (
             # Expected FAIL: uppercase in 'scope'
@@ -154,15 +132,21 @@ def message(request):
     return request.param
 
 
-def test_commit_message(args, message, capsys):
+def test_commit_message(message, capsys):
     # Unpack the message, the expectation, and the expected error message
     message_text, should_pass, expected_error = message
 
-    # Convert the args dictionary into a list of command-line arguments
-    argv = []
-    for k, v in args.items():
-        argv.append(f'--{k}')
-        argv.append(v)
+    # Convert the constants into a list of command-line arguments
+    argv = [
+        '--types',
+        TYPES.replace(', ', ','),
+        '--subject-min-length',
+        str(SUBJECT_MIN_LENGTH),
+        '--subject-max-length',
+        str(SUBJECT_MAX_LENGTH),
+        '--body-max-line-length',
+        str(BODY_MAX_LINE_LENGTH),
+    ]
 
     # Create a temporary file and write the commit message to it
     with tempfile.NamedTemporaryFile(delete=False) as temp:
