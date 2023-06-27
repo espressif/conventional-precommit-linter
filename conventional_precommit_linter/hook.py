@@ -26,7 +26,7 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
         '--subject-min-length', type=int, default=20, help="Minimum length of the 'Summary' field in commit message"
     )
     parser.add_argument(
-        '--subject-max-length', type=int, default=50, help="Maximum length of the 'Summary' field in commit message"
+        '--subject-max-length', type=int, default=72, help="Maximum length of the 'Summary' field in commit message"
     )
     parser.add_argument(
         '--body-max-line-length', type=int, default=100, help='Maximum length of the line in message body'
