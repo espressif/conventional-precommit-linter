@@ -16,7 +16,22 @@ To use the Conventional Precommit Linter Hook in your project, add the following
       stages: [commit-msg]
 ```
 
-Once this configuration is added, the Conventional Precommit Linter Hook will be included in the checks that the [pre-commit](https://pre-commit.com/) framework runs.
+### Install commit-msg hooks
+**IMPORTANT**: To install `commit-msg` type hooks, execute the command:
+```sh
+pre-commit install -t pre-commit -t commit-msg
+```
+
+Simple `pre-commit install` will not help here - The `pre-commit install` command in default is responsible ... for installing the pre-commit stage hooks only. This means that it sets up hooks which get triggered before the commit process really starts (that is, before you type a commit message). These hooks are typically used to run checks like linting or unit tests, which need to pass before the commit can be made.
+
+However, the `commit-msg` stage hooks (as the `conventional-precommit-linter` is) are a separate set of hooks that run at a different stage in the commit process. These hooks get triggered after you've typed in your commit message but before the commit is finalized.
+
+Since these two types of hooks run at different stages in the commit process and serve different purposes, the pre-commit framework treats them as distinct. Therefore, you need to use `pre-commit install` to set up the `pre-commit` hooks, and `pre-commit install -t commit-msg` to set up the `commit-msg` hooks.
+
+The `pre-commit install -t pre-commit -t commit-msg` command combines these two commands above.
+
+The developer only needs to execute this command once. Subsequent changes to the `.pre-commit-config.yaml` file do not require re-running it, but it is recommended to run it after each change to this file.
+
 
 ## Parameters
 
