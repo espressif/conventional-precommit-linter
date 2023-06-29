@@ -42,7 +42,7 @@ BODY_MAX_LINE_LENGTH = 100
         ),
         (
             # Expected PASS: Message without scope, with body
-            'change: This is commit message without scope with body\n\nThis is a text of body',
+            'change: This is commit message without scope with body\n\nThis is a text of body\n# Please enter the commit message for your changes. Lines starting\n# with \'#\' will be ignored, and an empty message aborts the commit.\n#',  # noqa: E501
             True,
             None,
         ),

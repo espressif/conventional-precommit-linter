@@ -31,9 +31,7 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
     parser.add_argument(
         '--body-max-line-length', type=int, default=100, help='Maximum length of the line in message body'
     )
-    parser.add_argument(
-        '--summary-uppercase', action='store_true', help='Summary must start with an uppercase letter'
-    )
+    parser.add_argument('--summary-uppercase', action='store_true', help='Summary must start with an uppercase letter')
     parser.add_argument('input', type=str, help='A file containing a git commit message')
     return parser.parse_args(argv)
 
@@ -87,7 +85,10 @@ def raise_error(message: str, error: str, types: str, args: argparse.Namespace) 
 def read_commit_message(file_path: str) -> str:
     try:
         with open(file_path, encoding='utf-8') as f:
-            content = f.read()
+            lines = f.readlines()
+            # Remove lines starting with '#'
+            lines = [line for line in lines if not line.startswith('#')]
+            content = ''.join(lines)
             if not content.strip():
                 print(f'❌ {ERROR_EMPTY_MESSAGE}')
                 raise SystemExit(1)
