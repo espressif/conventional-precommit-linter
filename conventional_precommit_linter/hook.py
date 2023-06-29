@@ -7,9 +7,9 @@ from typing import Optional
 DEFAULT_TYPES = ['change', 'ci', 'docs', 'feat', 'fix', 'refactor', 'remove', 'revert']
 
 ERROR_EMPTY_MESSAGE = 'Commit message seems to be empty.'
-ERROR_MISSING_COLON = "Missing colon after 'type' or 'scope'. Ensure the commit message has the format '<type><(scope/component)>: <Summary>'."  # noqa: E501
+ERROR_MISSING_COLON = "Missing colon after 'type' or 'scope'. Ensure the commit message has the format '<type><(scope/component)>: <summary>'."  # noqa: E501
 ERROR_TYPE = "Issue with 'type'. Ensure the type is one of [{}]."
-ERROR_SCOPE_CAPITALIZATION = "Issue with 'scope'. Ensure the scope starts with a lowercase letter"
+ERROR_SCOPE_CAPITALIZATION = "Issue with 'scope'. Ensure the scope starts with a lowercase letter. Allowed special characters in `scope` are _ / . , * -"  # noqa: E501
 ERROR_SUMMARY_LENGTH = "Issue with 'summary'. Ensure the summary is between {} and {} characters long."
 ERROR_SUMMARY_CAPITALIZATION = "Issue with 'summary'. Ensure the summary starts with an uppercase letter."
 ERROR_SUMMARY_PERIOD = "Issue with 'summary'. Ensure the summary does not end with a period."
@@ -36,18 +36,10 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def regex_types(args: argparse.Namespace) -> str:
+def get_types(args: argparse.Namespace) -> str:
     # Provided types take precedence over default types
     types = args.types[0].split(',') if args.types else DEFAULT_TYPES
     return ', '.join(types)
-
-
-def regex_scope() -> str:
-    return r'\(([a-z][^\)]*)\)'
-
-
-def regex_summary(args: argparse.Namespace) -> str:
-    return fr'([A-Z].{{{args.subject_min_length},{args.subject_max_length}}}$)'
 
 
 def raise_error(message: str, error: str, types: str, args: argparse.Namespace) -> None:
@@ -78,7 +70,9 @@ def raise_error(message: str, error: str, types: str, args: argparse.Namespace) 
     """
 
     print(f'{full_error_msg}{guide_good_message}')
-    print('\n\033[93m 👉 To preserve and correct a commit message, run\033[92m git commit --edit --file=.git/COMMIT_EDITMSG \033[0m')  # noqa: E501
+    print(
+        '\n\033[93m 👉 To preserve and correct a commit message, run\033[92m git commit --edit --file=.git/COMMIT_EDITMSG \033[0m'  # noqa: E501
+    )
     raise SystemExit(1)
 
 
@@ -105,7 +99,7 @@ def parse_commit_message(args: argparse.Namespace, input_commit_message: str) ->
     # First split 'message title' into potential 'type/scope' and 'summary'
     message_parts = message_title.split(': ', 1)  # using 1 as second argument to split only on first occurrence
     if len(message_parts) != 2:
-        types = regex_types(args)
+        types = get_types(args)
         raise_error(message_title, ERROR_MISSING_COLON, types, args)
 
     # Check if a 'scope' is provided in the potential 'type/scope' part
@@ -122,13 +116,14 @@ def parse_commit_message(args: argparse.Namespace, input_commit_message: str) ->
     commit_summary = message_parts[1]
 
     # Check for invalid commit 'type'
-    types = regex_types(args)
+    types = get_types(args)
     if commit_type not in types.split(', '):
         error = ERROR_TYPE.format(types)
         raise_error(message_title, error, types, args)
 
     # If 'scope' is provided, check for valid 'scope'
-    if commit_scope and not re.match(r'^[a-z][a-zA-Z0-9_-]*$', commit_scope):
+    REGEX_SCOPE = r'^[a-z][a-zA-Z0-9_/.,*-]*$'
+    if commit_scope and not re.match(REGEX_SCOPE, commit_scope):
         raise_error(message_title, ERROR_SCOPE_CAPITALIZATION, types, args)
 
     # Check for valid length of 'summary'

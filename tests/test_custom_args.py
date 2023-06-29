@@ -43,6 +43,24 @@ SUMMARY_UPPERCASE = True
             None,
         ),
         (
+            # Expected PASS: Message with scope (with asterisk in scope), without body
+            'change(examples*storage): This is commit message with asterisk in scope',
+            True,
+            None,
+        ),
+        (
+            # Expected PASS: Message with scope (with comma in scope), without body
+            'change(examples,storage): This is commit message with comma in scope',
+            True,
+            None,
+        ),
+        (
+            # Expected PASS: Message with scope (with slash in scope), without body
+            'change(examples/storage): This is commit message with slash in scope',
+            True,
+            None,
+        ),
+        (
             # Expected PASS: Message without scope, with body
             'change: This is commit message without scope with body\n\nThis is a text of body\n# Please enter the commit message for your changes. Lines starting\n# with \'#\' will be ignored, and an empty message aborts the commit.\n#',  # noqa: E501
             True,
