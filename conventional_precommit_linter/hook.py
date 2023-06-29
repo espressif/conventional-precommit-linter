@@ -78,7 +78,7 @@ def raise_error(message: str, error: str, types: str, args: argparse.Namespace) 
     """
 
     print(f'{full_error_msg}{guide_good_message}')
-
+    print('\n\033[93m 👉 To preserve and correct a commit message, run\033[92m git commit --edit --file=.git/COMMIT_EDITMSG \033[0m')  # noqa: E501
     raise SystemExit(1)
 
 
