@@ -41,7 +41,7 @@ The script supports additional parameters to customize its behavior:
 
 - `--subject-min-length`: Minimum length of the 'Summary' field in commit message. Defaults to `20`.
 
-- `--subject-max-length`: Maximum length of the 'Summary' field in commit message. Defaults to `50`.
+- `--subject-max-length`: Maximum length of the 'Summary' field in commit message. Defaults to `72`.
 
 - `--body-max-line-length`: Maximum length of a line in the commit message body. Defaults to `100`.
 
@@ -108,7 +108,7 @@ pytest
 ```
 ... or create a content in file `test_message.txt` and run:
 ```sh
-python -m conventional_precommit_linter.hook --subject-min-length 20 --subject-max-length 50 --body-max-line-length 100 test_message.txt
+python -m conventional_precommit_linter.hook --subject-min-length 20 --subject-max-length 72 --body-max-line-length 100 test_message.txt
 ```
 
 .... or (with default arguments):
