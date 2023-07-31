@@ -115,6 +115,12 @@ SUMMARY_UPPERCASE = True
             ERROR_SCOPE_CAPITALIZATION,
         ),
         (
+            # Expected FAIL: uppercase in 'scope'
+            'fix(dangerGH): Update token permissions - allow Danger to add comments to PR',
+            False,
+            ERROR_SCOPE_CAPITALIZATION,
+        ),
+        (
             # Expected FAIL: not allowed 'type' with scope and body
             'delete(bt): Added new feature with change\n\nThis feature adds functionality',
             False,

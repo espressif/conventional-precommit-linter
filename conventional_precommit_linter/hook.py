@@ -9,7 +9,7 @@ DEFAULT_TYPES = ['change', 'ci', 'docs', 'feat', 'fix', 'refactor', 'remove', 'r
 ERROR_EMPTY_MESSAGE = 'Commit message seems to be empty.'
 ERROR_MISSING_COLON = "Missing colon after 'type' or 'scope'. Ensure the commit message has the format '<type><(scope/component)>: <summary>'."  # noqa: E501
 ERROR_TYPE = "Issue with 'type'. Ensure the type is one of [{}]."
-ERROR_SCOPE_CAPITALIZATION = "Issue with 'scope'. Ensure the scope starts with a lowercase letter. Allowed special characters in `scope` are _ / . , * -"  # noqa: E501
+ERROR_SCOPE_CAPITALIZATION = "Issue with 'scope'. Ensure the 'scope' is written in lower case without whitespace. Allowed special characters in 'scope' are _ / . , * -"  # noqa: E501
 ERROR_SUMMARY_LENGTH = "Issue with 'summary'. Ensure the summary is between {} and {} characters long."
 ERROR_SUMMARY_CAPITALIZATION = "Issue with 'summary'. Ensure the summary starts with an uppercase letter."
 ERROR_SUMMARY_PERIOD = "Issue with 'summary'. Ensure the summary does not end with a period."
@@ -50,7 +50,7 @@ def raise_error(message: str, error: str, types: str, args: argparse.Namespace) 
 
     commit message rules:
         - use one of the following types: [{types}]
-        - 'scope/component' is optional, but if used, it must start with a lowercase letter
+        - 'scope/component' is optional, but if used, must be written in lower case without whitespace
         - 'summary' must not end with a period
         - 'summary' must be between {args.subject_min_length} and {args.subject_max_length} characters long
         - 'body' is optional, but if used, lines must be no longer than {args.body_max_line_length} characters
@@ -122,7 +122,7 @@ def parse_commit_message(args: argparse.Namespace, input_commit_message: str) ->
         raise_error(message_title, error, types, args)
 
     # If 'scope' is provided, check for valid 'scope'
-    REGEX_SCOPE = r'^[a-z][a-zA-Z0-9_/.,*-]*$'
+    REGEX_SCOPE = r'^[a-z0-9_/.,*-]*$'
     if commit_scope and not re.match(REGEX_SCOPE, commit_scope):
         raise_error(message_title, ERROR_SCOPE_CAPITALIZATION, types, args)
 
