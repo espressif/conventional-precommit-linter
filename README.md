@@ -74,7 +74,7 @@ Where:
 
 - `<type>`: a descriptor of the performed change, e.g., `feat`, `fix`, `refactor`, etc. Use one of the specified types (either default or provided using the `--types` parameter).
 
-- `<scope/component>` (optional): the scope or component that the commit pertains to. It should start with a lowercase letter.
+- `<scope/component>` (optional): the scope or component that the commit pertains to. It should be written in lower case without whitespace, allowed special characters in `scope` are `_` `/` `.` `,` `*` `-` `.`
 
 - `<summary>`: a short, concise description of the change. It should not end with a period, and be between `subject_min_length` and `subject_max_length` characters long (as specified by script parameters). If the `--summary-uppercase` flag is used, then the summary must start with a uppercase letter.
 
