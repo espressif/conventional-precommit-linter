@@ -7,9 +7,9 @@ from typing import Optional
 DEFAULT_TYPES = ['change', 'ci', 'docs', 'feat', 'fix', 'refactor', 'remove', 'revert']
 
 ERROR_EMPTY_MESSAGE = 'Commit message seems to be empty.'
-ERROR_MISSING_COLON = "Missing colon after 'type' or 'scope'. Ensure the commit message has the format '<type><(scope/component)>: <summary>'."  # noqa: E501
+ERROR_MISSING_COLON = "Missing colon after 'type' or 'scope'. Ensure the commit message has the format '<type><(scope/component)>: <summary>'."
 ERROR_TYPE = "Issue with 'type'. Ensure the type is one of [{}]."
-ERROR_SCOPE_CAPITALIZATION = "Issue with 'scope'. Ensure the 'scope' is written in lower case without whitespace. Allowed special characters in 'scope' are _ / . , * -"  # noqa: E501
+ERROR_SCOPE_CAPITALIZATION = "Issue with 'scope'. Ensure the 'scope' is written in lower case without whitespace. Allowed special characters in 'scope' are _ / . , * -"
 ERROR_SUMMARY_LENGTH = "Issue with 'summary'. Ensure the summary is between {} and {} characters long."
 ERROR_SUMMARY_CAPITALIZATION = "Issue with 'summary'. Ensure the summary starts with an uppercase letter."
 ERROR_SUMMARY_PERIOD = "Issue with 'summary'. Ensure the summary does not end with a period."
@@ -71,15 +71,15 @@ def raise_error(message: str, error: str, types: str, args: argparse.Namespace) 
 
     print(f'{full_error_msg}{guide_good_message}')
     print(
-        '\n\033[93m 👉 To preserve and correct a commit message, run\033[92m git commit --edit --file=.git/COMMIT_EDITMSG \033[0m'  # noqa: E501
+        '\n\033[93m 👉 To preserve and correct a commit message, run\033[92m git commit --edit --file=.git/COMMIT_EDITMSG \033[0m'
     )
     raise SystemExit(1)
 
 
 def read_commit_message(file_path: str) -> str:
     try:
-        with open(file_path, encoding='utf-8') as f:
-            lines = f.readlines()
+        with open(file_path, encoding='utf-8') as file:
+            lines = file.readlines()
             # Remove lines starting with '#'
             lines = [line for line in lines if not line.startswith('#')]
             content = ''.join(lines)
@@ -87,9 +87,9 @@ def read_commit_message(file_path: str) -> str:
                 print(f'❌ {ERROR_EMPTY_MESSAGE}')
                 raise SystemExit(1)
             return content
-    except UnicodeDecodeError:
+    except UnicodeDecodeError as exc:
         print('❌ Problem with reading the commit message. Possible encoding issue.')
-        raise SystemExit(1)
+        raise SystemExit(1) from exc
 
 
 def parse_commit_message(args: argparse.Namespace, input_commit_message: str) -> None:
@@ -122,8 +122,8 @@ def parse_commit_message(args: argparse.Namespace, input_commit_message: str) ->
         raise_error(message_title, error, types, args)
 
     # If 'scope' is provided, check for valid 'scope'
-    REGEX_SCOPE = r'^[a-z0-9_/.,*-]*$'
-    if commit_scope and not re.match(REGEX_SCOPE, commit_scope):
+    regex_scope = r'^[a-z0-9_/.,*-]*$'
+    if commit_scope and not re.match(regex_scope, commit_scope):
         raise_error(message_title, ERROR_SCOPE_CAPITALIZATION, types, args)
 
     # Check for valid length of 'summary'
