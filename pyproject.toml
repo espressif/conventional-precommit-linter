@@ -1,45 +1,165 @@
 [project]
-name = "conventional_precommit_linter"
-version = "1.2.1"
-description = "A pre-commit hook that checks commit messages for Conventional Commits formatting."
-readme = "README.md"
-license = { file = "LICENSE" }
-classifiers = ["Programming Language :: Python :: 3 :: Only"]
-keywords = ["git", "pre-commit", "conventional-commits"]
-authors = [
-    { name = "Tomas Sebestik (Espressif Systems)", email = "tomas.sebestik@espressif.com" }
-]
-requires-python = ">=3.8"
-dependencies = []
+    authors = [
+        { name = "Tomas Sebestik (Espressif Systems)", email = "tomas.sebestik@espressif.com" },
+    ]
+    classifiers = ["Programming Language :: Python :: 3 :: Only"]
+    dependencies = []
+    description = "A pre-commit hook that checks commit messages for Conventional Commits formatting."
+    dynamic = ["version"]
+    keywords = ["conventional-commits", "git", "pre-commit"]
+    license = { file = "LICENSE" }
+    name = "conventional_precommit_linter"
+    readme = "README.md"
+    requires-python = ">=3.8"
 
-[project.urls]
-code = "https://github.com/espressif/conventional-precommit-linter"
-tracker = "https://github.com/espressif/conventional-precommit-linter/issues"
+    [project.urls]
+        code    = "https://github.com/espressif/conventional-precommit-linter"
+        tracker = "https://github.com/espressif/conventional-precommit-linter/issues"
 
-[project.optional-dependencies]
-dev = [
-    "black",
-    "pytest",
-    "pre-commit",
-]
+    [project.optional-dependencies]
+        dev = [
+            "black==23.7.0",
+            "commitizen==3.10.1",
+            "mypy==1.4.1",
+            "pre-commit==3.3.3",
+            "pylint-quotes~=0.2.3",
+            "pylint~=2.17.5",
+            "pytest-cov~=4.1.0",
+            "pytest~=7.4.0",
+            "ruff==0.0.280",
+        ]
+        test = ["pytest-cov~=4.1.0", "pytest~=7.4.0"]
 
-[project.scripts]
-conventional-precommit-linter = "conventional_precommit_linter.hook:main"
+    [project.scripts]
+        conventional-precommit-linter = "conventional_precommit_linter.hook:main"
 
 [build-system]
-requires = ["setuptools>=64", "wheel"]
-build-backend = "setuptools.build_meta"
+    build-backend = "setuptools.build_meta"
+    requires      = ["setuptools>=64", "wheel"]
 
 [tool.black]
-line-length = 127
-target-version = ['py311']
-include = '\.pyi?$'
+    line-length               = 120  # The maximum line length for Python code formatting
+    skip-string-normalization = true # Avoids converting single quotes to double quotes in strings (pre-commit hook enforces single quotes in Python code)
+
+[tool.pylint]
+    [tool.pylint.MASTER]
+        ignore-paths = ["tests/.*"] # Paths to ignore during linting
+    [tool.pylint.'BASIC']
+        variable-rgx = "[a-z_][a-z0-9_]{1,30}$" # Variable names must start with a lowercase letter or underscore, followed by any combination of lowercase letters, numbers, or underscores, with a total length of 2 to 30 characters.
+    [tool.pylint.'MESSAGES CONTROL']
+        disable = [
+            "duplicate-code",                # R0801: Similar lines in %s files
+            "fixme",                         # W0511: Used when TODO/FIXME is encountered
+            "import-error",                  # E0401: Used when pylint has been unable to import a module
+            "import-outside-toplevel",       # E0402: Imports should usually be on top of the module
+            "line-too-long",                 # C0301: Line too long
+            "logging-fstring-interpolation", # W1202: Use % formatting in logging functions and pass the % parameters as arguments
+            "missing-class-docstring",       # C0115: Missing class docstring
+            "missing-function-docstring",    # C0116: Missing function or method docstring
+            "missing-module-docstring",      # C0114: Missing module docstring
+            "no-name-in-module",             # W0611: Used when a name cannot be found in a module
+            "too-few-public-methods",        # R0903: Too few public methods of class
+            "too-many-branches",             # R0912: Too many branches
+            "too-many-locals",               # R0914: Too many local variables
+            "too-many-return-statements",    # R0911: Too many return statements
+            "too-many-statements",           # R0915: Too many statements
+            "ungrouped-imports",             # C0412: Imports should be grouped by packages
+        ]
+    [tool.pylint.'FORMAT']
+        max-line-length = 120 # Specifies the maximum line length for pylint checks
+
+[tool.ruff]
+    ignore = [
+        "E501", # line-too-long
+    ]
+    line-length = 120 # Specifies the maximum line length for ruff checks
+    select = ['E', 'F', 'W'] # Types of issues ruff should check for
+    target-version = "py38" # Specifies the target Python version for ruff checks
+
+
+[tool.mypy]
+    disallow_incomplete_defs = false # Disallows defining functions with incomplete type annotations
+    disallow_untyped_defs    = true  # Disallows defining functions without type annotations or with incomplete type annotations
+    ignore_missing_imports   = true  # Suppress error messages about imports that cannot be resolved
+    python_version           = "3.9" # Specifies the Python version used to parse and check the target program
+    warn_no_return           = true  # Shows errors for missing return statements on some execution paths
+    warn_return_any          = true  # Shows a warning when returning a value with type Any from a function declared with a non- Any return type
+
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
-norecursedirs = [
-    "*.egg-info",
-    ".git",
-    ".pytest_cache",
-    ".vscode",
-]
+    addopts          = "-s --log-cli-level DEBUG --cov=conventional_precommit_linter --cov-report=term"
+    python_classes   = ["Test*"]
+    python_files     = ["test_*.py"]
+    python_functions = ["test_*"]
+    testpaths        = ["tests"]
+
+[tool.coverage.run]
+    omit = ["__*__.py", "tests/*"]
+
+[tool.commitizen]
+    annotated_tag            = true
+    bump_message             = "change: release v$new_version"
+    major_version_zero       = true
+    name                     = "cz_customize"
+    tag_format               = "v$version"
+    update_changelog_on_bump = true
+    version_provider         = "scm"
+
+    [tool.commitizen.customize]
+        bump_map = { "change" = "MINOR", "feat" = "MINOR", "fix" = "PATCH", "refactor" = "PATCH", "remove" = "PATCH", "revert" = "PATCH" }
+        bump_pattern = "^(change|feat|fix|refactor|remove|revert)"
+        change_type_order = [
+            "change",
+            "ci",
+            "docs",
+            "feat",
+            "fix",
+            "refactor",
+            "remove",
+            "revert",
+        ]
+        example = "change: this is a custom change type"
+        message_template = "{% if scope %}{{change_type}}({{scope}}): {{message}}{% else %}{{change_type}}: {{message}}{% endif %}{% if body %}\n\n{{body}}{% endif %}{% if is_breaking_change %}\n\nBREAKING CHANGE{% endif %}{% if footer %}\n\n{{footer}}{% endif %}"
+        schema = "<type>(<scope>): <summary>"
+        schema_pattern = "^([a-z]+)(\\([\\w\\-\\.]+\\))?:\\s.*"
+
+        [[tool.commitizen.customize.questions]]
+            choices = [
+                { value = "change", name = "change: A change made to the codebase." },
+                { value = "ci", name = "ci: Changes to our CI configuration files and scripts." },
+                { value = "docs", name = "docs: Documentation only changes." },
+                { value = "feat", name = "feat: A new feature." },
+                { value = "fix", name = "fix: A bug fix." },
+                { value = "refactor", name = "refactor: A code change that neither fixes a bug nor adds a feature." },
+                { value = "remove", name = "remove: Removing code or files." },
+                { value = "revert", name = "revert: Revert to a commit." },
+            ]
+            message = "Select the TYPE of change you are committing"
+            name = "change_type"
+            type = "list"
+
+        [[tool.commitizen.customize.questions]]
+            message = "What is the SCOPE of this change (press enter to skip)?"
+            name    = "scope"
+            type    = "input"
+
+        [[tool.commitizen.customize.questions]]
+            message = "Describe the changes made (SUMMARY of commit message):"
+            name    = "message"
+            type    = "input"
+
+        [[tool.commitizen.customize.questions]]
+            message = "Provide additional contextual information - commit message BODY: (press [enter] to skip)"
+            name    = "body"
+            type    = "input"
+
+        [[tool.commitizen.customize.questions]]
+            default = false
+            message = "Is this a BREAKING CHANGE? Correlates with MAJOR in SemVer"
+            name    = "is_breaking_change"
+            type    = "confirm"
+
+        [[tool.commitizen.customize.questions]]
+            message = "Footer. Information about Breaking Changes and reference issues that this commit closes: (press [enter] to skip)"
+            name    = "footer"
+            type    = "input"

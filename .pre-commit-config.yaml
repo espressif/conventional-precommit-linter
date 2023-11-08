@@ -1,38 +1,41 @@
-# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
+---
+minimum_pre_commit_version: 3.3.0                        # Specifies the minimum version of pre-commit required for this configuration
+default_install_hook_types: [pre-commit,commit-msg]      # Default hook types to install if not specified in individual hooks
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
+    rev: v4.5.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
-      - id: check-executables-have-shebangs
-      - id: mixed-line-ending
-        args: ['-f=lf']
-      - id: double-quote-string-fixer
+      - id: trailing-whitespace                          # Removes trailing whitespaces from lines
+      - id: end-of-file-fixer                            # Ensures files end with a newline
+      - id: check-executables-have-shebangs              # Checks executables have a proper shebang
+      - id: mixed-line-ending                            # Detects mixed line endings (CRLF/LF)
+        args: ['-f=lf']                                  # Forces files to use LF line endings
+      - id: double-quote-string-fixer                    # Converts single quotes to double quotes in strings
 
-  - repo: https://github.com/pycqa/flake8
-    rev: 3.8.4
+  - repo: https://github.com/pylint-dev/pylint
+    rev: v2.17.5
     hooks:
-      - id: flake8
-        args: ['--config=.flake8']
+    -   id: pylint                                       # Runs pylint on Python code
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 'v0.800'
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.280
     hooks:
-    -   id: mypy
+      - id: ruff                                         # Runs ruff linter (replaces flake8)
+        args: [--fix, --exit-non-zero-on-fix]
 
   - repo: https://github.com/asottile/reorder_python_imports
-    rev: v3.9.0
+    rev: v3.12.0
     hooks:
-    -   id: reorder-python-imports
+    -   id: reorder-python-imports                       # Reorders Python imports to a standard format (replaces isort)
 
-  - repo: local
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.4.1
     hooks:
-    -   id: pytest
-        name: pytest
-        entry: pytest
-        language: system
-        types: [python]
-        pass_filenames: false
+    -   id: mypy                                         # Runs mypy for Python type checking
+        additional_dependencies: ['types-all']
+
+  - repo: https://github.com/psf/black
+    rev: '23.7.0'
+    hooks:
+    -   id: black                                        # Formats Python code using black
