@@ -1,57 +1,96 @@
-# Conventional Precommit Linter
+<div align="center">
+  <h1>Conventional Precommit Linter</h1>
+  <img src="docs/conventional-precommit-linter.jpg" width="800">
+  <br>
+  <br>
+  <!-- GitHub Badges -->
+   <img alt="release" src="https://img.shields.io/github/v/release/espressif/conventional-precommit-linter" />
+   <img alt="tests" src="https://github.com/espressif/conventional-precommit-linter/actions/workflows/pytest.yml/badge.svg" />
+</div>
+The Conventional Precommit Linter is a tool designed to ensure commit messages follow the Conventional Commits standard, enhancing the readability and traceability of your project's history.
+<hr>
 
-The Conventional Precommit Linter hook is a Python script that checks the format of the commit messages, ensuring they adhere to the Conventional Commits standard with some additional parameters.
 
-It is intended to be used as a pre-commit hook to verify the commit messages before they are committed, improving the overall quality and consistency of your commit history.
+## Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [Getting Started](#getting-started)
+  - [Commit Message Structure](#commit-message-structure)
+  - [Installation](#installation)
+  - [Install Commit-msg Hooks](#install-commit-msg-hooks)
+- [Configuration](#configuration)
+- [Contributing and Development](#contributing-and-development)
+- [Credits](#credits)
+
+***
 
 ## Getting Started
 
-To use the Conventional Precommit Linter Hook in your project, add the following configuration to your `.pre-commit-config.yaml` file:
+### Commit Message Structure
+Commit messages are validated against the following format:
+```
+<type>(<optional-scope>): <summary>
+  < ... empty line ... >
+<optional body lines>
+<optional body lines>
+<optional body lines>
+```
+Each component is checked for compliance with the provided or default configuration.
+
+**Example output for failed message:**
+<img src="docs/example-output-default-args.png" width="800">
+
+**Example output for failed message (with custom arguments):**
+<img src="docs/example-output-custom-args.png" width="800">
+
+### Installation
+
+To integrate the **Conventional Precommit Linter** into your project, add to your `.pre-commit-config.yaml`:
 
 ```yaml
-- repo: https://github.com/espressif/conventional-precommit-linter
-  rev: v1.0.0
-  hooks:
-    - id: conventional-precommit-linter
-      stages: [commit-msg]
+# FILE: .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/espressif/conventional-precommit-linter
+    rev: v1.3.0  # The version tag you wish to use
+    hooks:
+      - id: conventional-precommit-linter
+        stages: [commit-msg]
 ```
 
-### Install commit-msg hooks
-**IMPORTANT**: To install `commit-msg` type hooks, execute the command:
+### Install Commit-msg Hooks
+**IMPORTANT:** `commit-msg` hooks require a specific installation command:
 ```sh
 pre-commit install -t pre-commit -t commit-msg
 ```
 
-Simple `pre-commit install` will not help here - The `pre-commit install` command in default is responsible ... for installing the pre-commit stage hooks only. This means that it sets up hooks which get triggered before the commit process really starts (that is, before you type a commit message). These hooks are typically used to run checks like linting or unit tests, which need to pass before the commit can be made.
+**Note:** The `pre-commit install` command by default sets up only the `pre-commit` stage hooks. The additional flag `-t commit-msg` is necessary to set up `commit-msg` stage hooks.
 
-However, the `commit-msg` stage hooks (as the `conventional-precommit-linter` is) are a separate set of hooks that run at a different stage in the commit process. These hooks get triggered after you've typed in your commit message but before the commit is finalized.
-
-Since these two types of hooks run at different stages in the commit process and serve different purposes, the pre-commit framework treats them as distinct. Therefore, you need to use `pre-commit install` to set up the `pre-commit` hooks, and `pre-commit install -t commit-msg` to set up the `commit-msg` hooks.
-
-The `pre-commit install -t pre-commit -t commit-msg` command combines these two commands above.
-
-The developer only needs to execute this command once. Subsequent changes to the `.pre-commit-config.yaml` file do not require re-running it, but it is recommended to run it after each change to this file.
-
-
-## Parameters
-
-The script supports additional parameters to customize its behavior:
-
-- `--types`: Optional list of commit types to support. If not specified, the default types are `["change", "ci", "docs", "feat", "fix", "refactor", "remove", "revert"]`.
-
-- `--subject-min-length`: Minimum length of the 'Summary' field in commit message. Defaults to `20`.
-
-- `--subject-max-length`: Maximum length of the 'Summary' field in commit message. Defaults to `72`.
-
-- `--body-max-line-length`: Maximum length of a line in the commit message body. Defaults to `100`.
-
-- `--summary-uppercase`: Summary must start with an uppercase letter. If not specified, the default is `false` (uppercase not required).
-
-You can modify these parameters by adding them to the `args` array in the `.pre-commit-config.yaml` file. For example, to change the `--subject-min-length` to `10` and add a new type `fox`, your configuration would look like this:
-
+For a simplified setup (just with `pre-commit install` without flags), ensure your `.pre-commit-config.yaml` contains the following:
 ```yaml
+# FILE: .pre-commit-config.yaml
+---
+minimum_pre_commit_version: 3.3.0
+default_install_hook_types: [pre-commit,commit-msg]
+...
+```
+After modifying `.pre-commit-config.yaml`, re-run the install command (`pre-commit install`) for changes to take effect.
+
+
+## Configuration
+
+The linter accepts several configurable parameters to tailor commit message validation:
+- `--types`: Define the types of commits allowed (default: [`change`, `ci`, `docs`, `feat`, `fix`, `refactor`, `remove`, `revert`]).
+- `--subject-min-length`: Set the minimum length for the summary (default: `20`).
+- `--subject-max-length`: Set the maximum length for the summary (default: `72`).
+- `--body-max-line-length`: Set the maximum line length for the body (default: `100`).
+- `--summary-uppercase`: Enforce the summary to start with an uppercase letter (default: `disabled`).
+
+The **custom configuration** can be specified in `.pre-commit-config.yaml` like this:
+```yaml
+# FILE: .pre-commit-config.yaml
+...
 - repo: https://github.com/espressif/conventional-precommit-linter
-  rev: v1.0.0
+  rev: v1.3.0  # The version tag you wish to use
   hooks:
     - id: conventional-precommit-linter
       stages: [commit-msg]
@@ -60,68 +99,56 @@ You can modify these parameters by adding them to the `args` array in the `.pre-
         - --subject-min-length=10
 ```
 
-## Commit Message Structure
+***
 
-The script checks commit messages for the following structure:
+## Contributing and Development
 
-```text
-<type><(scope/component)>: <Summary>
+We welcome contributions! To contribute to this repository, please follow these steps:
 
-<Body>
-```
+1. **Clone the Project**: Clone the repository to your local machine using:
+    ```sh
+    git clone https://github.com/espressif/conventional-precommit-linter.git
+    ```
 
-Where:
+2. **Set Up Development Environment:**
 
-- `<type>`: a descriptor of the performed change, e.g., `feat`, `fix`, `refactor`, etc. Use one of the specified types (either default or provided using the `--types` parameter).
+- Create and activate a virtual environment:
+  ```sh
+  virtualenv venv -p python3.8 && source ./venv/bin/activate
+  ```
+  or
+  ```sh
+  python -m venv venv && source ./venv/bin/activate
+  ```
 
-- `<scope/component>` (optional): the scope or component that the commit pertains to. It should be written in lower case without whitespace, allowed special characters in `scope` are `_` `/` `.` `,` `*` `-` `.`
+- Install the project and development dependencies:
+  ```sh
+  pip install -e '.[dev]'
+  ```
 
-- `<summary>`: a short, concise description of the change. It should not end with a period, and be between `subject_min_length` and `subject_max_length` characters long (as specified by script parameters). If the `--summary-uppercase` flag is used, then the summary must start with a uppercase letter.
+3. **Testing Your Changes:**
 
-- `<body>` (optional): a detailed description of the change. Each line should be no longer than `body_max_line_length` characters (as specified by script parameters). There should be one blank line between the summary and the body.
+- Create a file named `test_message.txt` in the root of the repository (this file is git-ignored) and place an example commit message in it.
 
-Examples:
+- Run the tool to lint the message:
+  ```sh
+    python -m conventional_precommit_linter.hook test_message.txt
+  ```
 
-```text
-fix(freertos): Fix startup timeout issue
-
-This is a detailed description of the commit message body ...
-
-...
-
-ci: added target test job for ESP32-Wifi6
-
-...
-```
-
-With the Conventional Precommit Linter hook, your project can maintain clean and understandable commit messages that follow the Conventional Commits standard.
+  ... or with arguments:
+  ```sh
+  python -m conventional_precommit_linter.hook --subject-min-length 20 --subject-max-length 72 --body-max-line-length 100 test_message.txt
+  ```
 
 
-## Testing
-
-Our Conventional Precommit Linter hook also includes a test suite to ensure the correct functioning of the script.
-
-To run these tests, you will need to have `pytest` installed. Once `pytest` is installed, you can run the tests by navigating to the root directory of this project and executing:
-
+Before submitting a pull request, ensure your changes pass all the tests. You can run the test suite with the following command:
 ```sh
 pytest
 ```
-... or create a content in file `test_message.txt` and run:
-```sh
-python -m conventional_precommit_linter.hook --subject-min-length 20 --subject-max-length 72 --body-max-line-length 100 test_message.txt
-```
 
-.... or (with default arguments):
-```sh
-python -m conventional_precommit_linter.hook test_message.txt
-```
-
-The test cases include a variety of commit message scenarios and check if the script correctly identifies valid and invalid messages. The test suite ensures the correct identification of message structure, format, length, and content, amongst other parameters.
-
-This way, the integrity of the Conventional Precommit Linter hook is continuously checked. Regularly running these tests after modifications to the script is highly recommended to ensure its consistent performance.
+Please also adhere to the Conventional Commits standard when writing your commit messages for this project.
 
 ***
 
-
-## Credit
+## Credits
 Inspired by project: https://github.com/compilerla/conventional-pre-commit
