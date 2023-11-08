@@ -1,4 +1,4 @@
-name: Test hook script with Pytest
+name: Tests Pytest (multi-os)
 
 on:
   push:

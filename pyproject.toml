@@ -3,7 +3,7 @@
         { name = "Tomas Sebestik (Espressif Systems)", email = "tomas.sebestik@espressif.com" },
     ]
     classifiers = ["Programming Language :: Python :: 3 :: Only"]
-    dependencies = []
+    dependencies = ["colorama==0.4.6"]
     description = "A pre-commit hook that checks commit messages for Conventional Commits formatting."
     dynamic = ["version"]
     keywords = ["conventional-commits", "git", "pre-commit"]
@@ -87,7 +87,7 @@
 
 
 [tool.pytest.ini_options]
-    addopts          = "-s --log-cli-level DEBUG --cov=conventional_precommit_linter --cov-report=term"
+    addopts          = "-ra -v -p no:print --cov=conventional_precommit_linter --cov-report=term"
     python_classes   = ["Test*"]
     python_files     = ["test_*.py"]
     python_functions = ["test_*"]
