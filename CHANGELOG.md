@@ -1,9 +1,10 @@
-## Unreleased
+## v1.3.0 (2023-11-09)
 
 
+- fix: commitizen versions settings in pyproject.toml
 - change(user-output): update user output marking all issues with message - Dynamic messages in output report - Color input commit message same as message elements - Tests updated
 - ci: update project settings configuration (pyproject.toml)
-- add CHANGELOG.md, commitizen, test packages definitions
+- - add CHANGELOG.md, commitizen, test packages definitions
 - GitHub action - testing on multiple OSes
 
 ## v1.2.1 (2023-07-31)
