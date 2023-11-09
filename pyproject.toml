@@ -99,7 +99,6 @@
 [tool.commitizen]
     annotated_tag            = true
     bump_message             = "change: release v$new_version"
-    major_version_zero       = true
     name                     = "cz_customize"
     tag_format               = "v$version"
     update_changelog_on_bump = true
