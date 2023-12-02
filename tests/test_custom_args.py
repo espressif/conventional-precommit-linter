@@ -6,7 +6,8 @@ from conventional_precommit_linter.hook import main
 from conventional_precommit_linter.hook import rules_output_status
 
 # Default values for the commit message format
-TYPES = 'change, ci, docs, feat, fix, refactor, remove, revert, fox'
+TYPES = 'change,ci,docs,feat,fix,refactor,remove,revert,fox'
+SCOPES = 'bootloader,bt,esp32,esp-rom,examples,examples*storage,rom,wifi'
 SUBJECT_MIN_LENGTH = 21
 SUBJECT_MAX_LENGTH = 53
 BODY_MAX_LINE_LENGTH = 107
@@ -17,6 +18,7 @@ default_rules_output_status = {
     'empty_message': False,
     'error_body_format': False,
     'error_body_length': False,
+    'error_scope_allowed': False,
     'error_scope_capitalization': False,
     'error_scope_format': False,
     'error_summary_capitalization': False,
@@ -55,14 +57,19 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
             {},
         ),
         (
-            # Expected PASS: Message with scope (with comma in scope), without body
+            # Expected FAIL: Message with not allowed scope and body
+            'feat(tomas): This is commit message with scope and body\n\nThis is a text of body',
+            {'error_scope_allowed': True},
+        ),
+        (
+            # Expected FAIL: Message with scope (with comma in scope), without body
             'change(examples,storage): This is commit message with comma in scope',
-            {},
+            {'error_scope_allowed': True},
         ),
         (
             # Expected PASS: Message with scope (with slash in scope), without body
             'change(examples/storage): This is commit message with slash in scope',
-            {},
+            {'error_scope_allowed': True},
         ),
         (
             # Expected PASS: Message without scope, with body
@@ -117,12 +124,19 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
         (
             # Expected FAIL: uppercase in 'scope', with body
             'change(Bt): Added new feature with change\n\nThis feature adds functionality',
-            {'error_scope_capitalization': True},
+            {
+                'error_scope_capitalization': True,
+                'error_scope_allowed': True,
+            },
         ),
         (
             # Expected FAIL: uppercase in 'scope', no body
             'fix(dangerGH): Update token permissions - allow Danger to add comments to PR',
-            {'error_scope_capitalization': True, 'error_summary_length': True},
+            {
+                'error_scope_capitalization': True,
+                'error_summary_length': True,
+                'error_scope_allowed': True,
+            },
         ),
         (
             # Expected FAIL: not allowed 'type' with scope and body
@@ -155,7 +169,7 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
             {'error_body_length': True},
         ),
         (
-            # Expected FAIL: 'scope' missing parenthese
+            # Expected FAIL: 'scope' missing parentheses
             'fix(bt: Update database schemas\n\nUpdating the database schema to include new fields.',
             {'error_scope_format': True},
         ),
@@ -164,6 +178,7 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
             'fox(BT): update database schemas. Updating the database schema to include new fields and user profile preferences, cleaning up unnecessary calls.',
             {
                 'error_summary_capitalization': True,
+                'error_scope_allowed': True,
                 'error_scope_capitalization': True,
                 'error_summary_length': True,
                 'error_summary_period': True,
@@ -195,6 +210,8 @@ def test_commit_message_with_args(commit_message):  # pylint: disable=redefined-
     argv = [
         '--types',
         TYPES,
+        '--scopes',
+        SCOPES,
         '--subject-min-length',
         str(SUBJECT_MIN_LENGTH),
         '--subject-max-length',

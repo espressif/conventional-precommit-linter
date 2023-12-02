@@ -80,6 +80,7 @@ After modifying `.pre-commit-config.yaml`, re-run the install command (`pre-comm
 
 The linter accepts several configurable parameters to tailor commit message validation:
 - `--types`: Define the types of commits allowed (default: [`change`, `ci`, `docs`, `feat`, `fix`, `refactor`, `remove`, `revert`]).
+- `--scopes`: Specifies a list of allowed scopes. If not defined, all scopes are allowed (restriction is `disabled`).
 - `--subject-min-length`: Set the minimum length for the summary (default: `20`).
 - `--subject-max-length`: Set the maximum length for the summary (default: `72`).
 - `--body-max-line-length`: Set the maximum line length for the body (default: `100`).
@@ -96,6 +97,7 @@ The **custom configuration** can be specified in `.pre-commit-config.yaml` like 
       stages: [commit-msg]
       args:
         - --types=change,ci,docs,feat,fix,refactor,remove,revert,fox
+        - --scopes=bt,wifi,ethernet
         - --subject-min-length=10
 ```
 
@@ -137,7 +139,7 @@ We welcome contributions! To contribute to this repository, please follow these 
 
   ... or with arguments:
   ```sh
-  python -m conventional_precommit_linter.hook --subject-min-length 20 --subject-max-length 72 --body-max-line-length 100 test_message.txt
+  python -m conventional_precommit_linter.hook test_message.txt --subject-min-length="12" --subject-max-length="55" --body-max-line-length="88" --types="feat,change,style" --scopes="bt,wifi,ethernet"
   ```
 
 

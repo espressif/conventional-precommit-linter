@@ -16,6 +16,7 @@ rules_output_status = {
     'empty_message': False,
     'error_body_format': False,
     'error_body_length': False,
+    'error_scope_allowed': False,
     'error_scope_capitalization': False,
     'error_scope_format': False,
     'error_summary_capitalization': False,
@@ -26,11 +27,17 @@ rules_output_status = {
 }
 
 
-def allowed_types(args: argparse.Namespace) -> str:
+def get_allowed_types(args: argparse.Namespace) -> List[str]:
     default_types = ['change', 'ci', 'docs', 'feat', 'fix', 'refactor', 'remove', 'revert']
     # Provided types take precedence over default types
-    types = args.types[0].split(',') if args.types else default_types
-    return ', '.join(types)
+    types: List[str] = args.types[0].split(',') if args.types else default_types
+    return types
+
+
+def get_allowed_scopes(args: argparse.Namespace) -> List[str]:
+    default_scopes: List[str] = []
+    scopes: List[str] = args.scopes[0].split(',') if args.scopes else default_scopes
+    return scopes
 
 
 def read_commit_message(file_path: str) -> str:
@@ -69,16 +76,21 @@ def check_colon_after_type(message_title: str) -> bool:
 
 def check_allowed_types(commit_type: str, args: argparse.Namespace) -> None:
     """Check for allowed types."""
-    types = allowed_types(args)
+    types: List[str] = get_allowed_types(args)
     if commit_type not in types:
         rules_output_status['error_type'] = True
 
 
-def check_scope(commit_scope: str) -> None:
+def check_scope(commit_scope: str, args: argparse.Namespace) -> None:
     """Check for scope capitalization and allowed characters"""
     regex_scope = r'^[a-z0-9_/.,*-]*$'
     if commit_scope and not re.match(regex_scope, commit_scope):
         rules_output_status['error_scope_capitalization'] = True
+
+    # Check against the list of allowed scopes if provided
+    allowed_scopes: List[str] = get_allowed_scopes(args)
+    if allowed_scopes and commit_scope not in allowed_scopes:
+        rules_output_status['error_scope_allowed'] = True
 
 
 def check_summary_length(commit_summary: str, args: argparse.Namespace) -> None:
@@ -125,22 +137,44 @@ def print_report(commit_type: str, commit_scope: Optional[str], commit_summary: 
             f'{_color_purple(commit_type)}({ _color_blue( commit_scope)}): { _color_orange( commit_summary)}'
         )
 
-    # Rule messages that are always included
-    rule_messages = [
-        f"{_get_icon_for_rule(rules_output_status['error_type'])} {_color_purple('<type>')} is mandatory, use one of the following: [{_color_purple(allowed_types(args))}]",
-        f"{_get_icon_for_rule(rules_output_status['error_scope_format'])} {_color_blue('(<optional-scope>)')} if used, must be enclosed in parentheses",
-        f"{_get_icon_for_rule(rules_output_status['error_scope_capitalization'])} {_color_blue('(<optional-scope>)')} if used, must be written in lower case without whitespace",
-        f"{_get_icon_for_rule(rules_output_status['error_summary_period'])} {_color_orange('<summary>')} must not end with a period",
-        f"{_get_icon_for_rule(rules_output_status['error_summary_length'])} {_color_orange('<summary>')} must be between {args.subject_min_length} and {args.subject_max_length} characters long",
-        f"{_get_icon_for_rule(rules_output_status['error_body_length'])} {_color_grey('<body>')} lines must be no longer than {args.body_max_line_length} characters",
-        f"{_get_icon_for_rule(rules_output_status['error_body_format'])} {_color_grey('<body>')} must be separated from the 'summary' by a blank line",
-    ]
+    rule_messages: List[str] = []
 
-    # Dynamically add the additional rules set by arguments
+    # TYPES messages
+    rule_messages.append(
+        f"{_get_icon_for_rule(rules_output_status['error_type'])} {_color_purple('<type>')} is mandatory, use one of the following: [{_color_purple(', '.join(get_allowed_types(args)))}]"
+    )
+
+    # SCOPE messages
+    rule_messages.append(
+        f"{_get_icon_for_rule(rules_output_status['error_scope_format'])} {_color_blue('(<optional-scope>)')} if used, must be enclosed in parentheses"
+    )
+    rule_messages.append(
+        f"{_get_icon_for_rule(rules_output_status['error_scope_capitalization'])} {_color_blue('(<optional-scope>)')} if used, must be written in lower case without whitespace"
+    )
+    if args.scopes:
+        rule_messages.append(
+            f"{_get_icon_for_rule(rules_output_status['error_scope_allowed'])} {_color_blue('(<optional-scope>)')} if used, must be one of the following allowed scopes: [{_color_blue(', '.join(args.scopes))}]"
+        )
+
+    # SUMMARY messages
+    rule_messages.append(
+        f"{_get_icon_for_rule(rules_output_status['error_summary_period'])} {_color_orange('<summary>')} must not end with a period"
+    )
+    rule_messages.append(
+        f"{_get_icon_for_rule(rules_output_status['error_summary_length'])} {_color_orange('<summary>')} must be between {args.subject_min_length} and {args.subject_max_length} characters long"
+    )
     if args.summary_uppercase:
         rule_messages.append(
             f"{_get_icon_for_rule(rules_output_status['error_summary_capitalization'])} {_color_orange('<summary>')} must start with an uppercase letter"
         )
+
+    # BODY messages
+    rule_messages.append(
+        f"{_get_icon_for_rule(rules_output_status['error_body_length'])} {_color_grey('<body>')} lines must be no longer than {args.body_max_line_length} characters"
+    )
+    rule_messages.append(
+        f"{_get_icon_for_rule(rules_output_status['error_body_format'])} {_color_grey('<body>')} must be separated from the 'summary' by a blank line"
+    )
 
     # Combine the rule messages into the final report block
     message_rules_block = '    ' + '\n        '.join(rule_messages)
@@ -165,11 +199,14 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog='conventional-pre-commit', description='Check a git commit message for Conventional Commits formatting.'
     )
-    parser.add_argument('--types', type=str, nargs='*', help='Optional list of types to support')
+    parser.add_argument('--types', type=str, nargs='*', help="Redefine the list of allowed 'Types'")
+    parser.add_argument('--scopes', type=str, nargs='*', help="Setting the list of allowed 'Scopes'")
     parser.add_argument('--subject-min-length', type=int, default=20, help="Minimum length of the 'Summary'")
     parser.add_argument('--subject-max-length', type=int, default=72, help="Maximum length of the 'Summary'")
-    parser.add_argument('--body-max-line-length', type=int, default=100, help='Maximum length of the body line')
-    parser.add_argument('--summary-uppercase', action='store_true', help='Summary must start with an uppercase letter')
+    parser.add_argument('--body-max-line-length', type=int, default=100, help="Maximum length of the 'Body' line")
+    parser.add_argument(
+        '--summary-uppercase', action='store_true', help="'Summary' must start with an uppercase letter"
+    )
     parser.add_argument('input', type=str, help='A file containing a git commit message')
     return parser.parse_args(argv)
 
@@ -200,7 +237,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     # Commit message title (first line) checks
     check_allowed_types(commit_type, args)
     if commit_scope:
-        check_scope(commit_scope)
+        check_scope(commit_scope, args)
     check_summary_length(commit_summary, args)
     check_summary_period(commit_summary)
     if args.summary_uppercase:
