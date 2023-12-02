@@ -38,10 +38,10 @@ Commit messages are validated against the following format:
 Each component is checked for compliance with the provided or default configuration.
 
 **Example output for failed message:**
-<img src="docs/example-output-default-args.png" width="800">
+<img src="docs/example-output-default-args.jpg" width="800">
 
 **Example output for failed message (with custom arguments):**
-<img src="docs/example-output-custom-args.png" width="800">
+<img src="docs/example-output-custom-args.jpg" width="710">
 
 ### Installation
 
