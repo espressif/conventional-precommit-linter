@@ -6,20 +6,20 @@ init(autoreset=True)  # Automatically reset the style after each print
 
 
 def _color_bold_green(text: str) -> str:
-    return f'{Style.BRIGHT}{Fore.GREEN}{text}'
+    return f'{Style.BRIGHT}{Fore.GREEN}{text}{Style.RESET_ALL}'
 
 
 def _color_purple(text: str) -> str:
-    return f'{Fore.MAGENTA}{text}'
+    return f'{Fore.MAGENTA}{text}{Style.RESET_ALL}'
 
 
 def _color_orange(text: str) -> str:
-    return f'{Fore.YELLOW}{text}'
+    return f'{Fore.YELLOW}{text}{Style.RESET_ALL}'
 
 
 def _color_blue(text: str) -> str:
-    return f'{Fore.LIGHTBLUE_EX}{text}'
+    return f'{Fore.LIGHTBLUE_EX}{text}{Style.RESET_ALL}'
 
 
 def _color_grey(text: str) -> str:
-    return f'{Fore.LIGHTBLACK_EX}{text}'
+    return f'{Fore.LIGHTBLACK_EX}{text}{Style.RESET_ALL}'
