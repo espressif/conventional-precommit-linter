@@ -20,6 +20,7 @@ rules_output_status = {
     'error_scope_allowed': False,
     'error_scope_capitalization': False,
     'error_scope_format': False,
+    'error_breaking': False,
     'error_summary_capitalization': False,
     'error_summary_length': False,
     'error_summary_period': False,
@@ -50,19 +51,30 @@ def read_commit_message(file_path: str) -> str:
         return content
 
 
-def split_message_title(message_title: str) -> Tuple[str, Optional[str], str]:
+def split_message_title(message_title: str, args: argparse.Namespace) -> Tuple[str, Optional[str], str]:
     """Split 'message title' into 'type/scope' and 'summary'"""
     type_and_scope, _, commit_summary = message_title.partition(': ')
-    commit_type, _, scope_part = type_and_scope.partition('(')
-
-    # Check if both opening and closing parentheses are present
-    if '(' in type_and_scope and ')' not in scope_part:
-        rules_output_status['error_scope_format'] = True
-        return commit_type, None, commit_summary  # Return None for the scope due to the error
-
-    commit_scope: Optional[str] = scope_part.rstrip(')').strip() if scope_part else None
     commit_summary = commit_summary.strip()
-    return commit_type, commit_scope, commit_summary
+
+    # Regex for type and scope of commitizen:
+    regex_type_and_scope = r'^(?P<type>\w+)(\((?P<scope>[^\)]+)\))?(?P<breaking>!)?$'
+    match = re.match(regex_type_and_scope, type_and_scope)
+
+    if not match:
+        if '(' in type_and_scope and ')' not in type_and_scope:
+            rules_output_status['error_scope_format'] = True
+        else:
+            rules_output_status['error_type'] = True
+
+        commit_type = type_and_scope.split('(')[0]
+
+        # Return None for the scope due to the error
+        return commit_type, None, commit_summary
+
+    if not args.allow_breaking and match.group('breaking'):
+        rules_output_status['error_breaking'] = True
+
+    return match.group('type'), match.group('scope'), commit_summary
 
 
 def check_colon_after_type(message_title: str) -> bool:
@@ -130,12 +142,12 @@ def _get_icon_for_rule(status: bool) -> str:
 
 
 def print_report(commit_type: str, commit_scope: Optional[str], commit_summary: str, args) -> None:
+    append_bang = '' if args.allow_breaking else '!'
+
     # Color the input commit message with matching element colors
-    commit_message = f'{_color_purple(commit_type)}: { _color_orange( commit_summary)}'
+    commit_message = f'{_color_purple(commit_type)}{_color_purple(append_bang)}: { _color_orange( commit_summary)}'
     if commit_scope:
-        commit_message = (
-            f'{_color_purple(commit_type)}({ _color_blue( commit_scope)}): { _color_orange( commit_summary)}'
-        )
+        commit_message = f'{_color_purple(commit_type)}({ _color_blue( commit_scope)}){_color_purple(append_bang)}: { _color_orange( commit_summary)}'
 
     rule_messages: List[str] = []
 
@@ -143,6 +155,11 @@ def print_report(commit_type: str, commit_scope: Optional[str], commit_summary: 
     rule_messages.append(
         f"{_get_icon_for_rule(rules_output_status['error_type'])} {_color_purple('<type>')} is mandatory, use one of the following: [{_color_purple(', '.join(get_allowed_types(args)))}]"
     )
+
+    if not args.allow_breaking:
+        rule_messages.append(
+            f"{_get_icon_for_rule(rules_output_status['error_breaking'])} {_color_purple('<type>')} must not include {_color_purple('!')} to indicate a breaking change"
+        )
 
     # SCOPE messages
     rule_messages.append(
@@ -207,6 +224,7 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
     parser.add_argument(
         '--summary-uppercase', action='store_true', help="'Summary' must start with an uppercase letter"
     )
+    parser.add_argument('--allow-breaking', action='store_true', help='Allow exclamation mark in the commit type')
     parser.add_argument('input', type=str, help='A file containing a git commit message')
     return parser.parse_args(argv)
 
@@ -225,7 +243,6 @@ def main(argv: Optional[List[str]] = None) -> int:
     message_lines = input_commit_message.strip().split('\n')  # Split the commit message into lines
     message_title = message_lines[0]  # The summary is the first line
     message_body = message_lines[1:]  # The body is everything after the summary, if it exists
-    commit_type, commit_scope, commit_summary = split_message_title(message_title)
 
     if not check_colon_after_type(message_title):
         print(f'❌ Missing colon after {_color_purple("<type>")} or {_color_blue("(<optional-scope>)")}.')
@@ -233,6 +250,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             f'\nEnsure the commit message has the format \"{_color_purple("<type>")}{_color_blue("(<optional-scope>)")}: {_color_orange("<summary>")}\"'
         )
         return 1
+
+    commit_type, commit_scope, commit_summary = split_message_title(message_title, args)
 
     # Commit message title (first line) checks
     check_allowed_types(commit_type, args)

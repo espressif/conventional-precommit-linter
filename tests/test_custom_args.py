@@ -11,22 +11,6 @@ SCOPES = 'bootloader,bt,esp32,esp-rom,examples,examples*storage,rom,wifi'
 SUBJECT_MIN_LENGTH = 21
 SUBJECT_MAX_LENGTH = 53
 BODY_MAX_LINE_LENGTH = 107
-SUMMARY_UPPERCASE = True
-
-# Default dictionary with all values set to False
-default_rules_output_status = {
-    'empty_message': False,
-    'error_body_format': False,
-    'error_body_length': False,
-    'error_scope_allowed': False,
-    'error_scope_capitalization': False,
-    'error_scope_format': False,
-    'error_summary_capitalization': False,
-    'error_summary_length': False,
-    'error_summary_period': False,
-    'error_type': False,
-    'missing_colon': False,
-}
 
 
 # Dynamic test naming based on the commit message
@@ -90,6 +74,21 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
             # Expected PASS: 'body' line longer (custom arg 107 chars)
             'fix(bt): Update database schemas\n\nUpdating the database schema to include fields and user profile preferences, cleaning up unnecessary calls',
             {},
+        ),
+        (
+            # Expected PASS: Message without scope with exclamation mark
+            'change!: This is commit with exclamation mark',
+            {},
+        ),
+        (
+            # Expected PASS: Message with scope with exclamation mark
+            'change(rom)!: This is commit with exclamation mark',
+            {},
+        ),
+        (
+            # Expected FAIL: Message with scope with 2 exclamation marks
+            'change(rom)!!: This is commit message with 2 exclamations',
+            {'error_type': True},
         ),
         (
             # Expected FAIL: missing colon between 'type' (and 'scope') and 'summary'
@@ -188,13 +187,13 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
     # Use the commit message to generate IDs for each test case
     ids=commit_message_id,
 )
-def commit_message(request):
+def commit_message(request, default_rules_output_status):
     # Combine the default dictionary with the test-specific dictionary
     combined_output = {**default_rules_output_status, **request.param[1]}
     return request.param[0], combined_output
 
 
-def test_commit_message_with_args(commit_message):  # pylint: disable=redefined-outer-name
+def test_commit_message_with_args(commit_message, default_rules_output_status):  # pylint: disable=redefined-outer-name
     message_text, expected_output = commit_message
 
     # Reset rules_output_status to its default state before each test case
@@ -218,7 +217,8 @@ def test_commit_message_with_args(commit_message):  # pylint: disable=redefined-
         str(SUBJECT_MAX_LENGTH),
         '--body-max-line-length',
         str(BODY_MAX_LINE_LENGTH),
-        '--summary-uppercase' if SUMMARY_UPPERCASE else '--no-summary-uppercase',
+        '--summary-uppercase',
+        '--allow-breaking',
         temp_file_name,
     ]
 

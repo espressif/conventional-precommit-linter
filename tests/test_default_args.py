@@ -11,20 +11,6 @@ SUBJECT_MIN_LENGTH = 20
 SUBJECT_MAX_LENGTH = 72
 BODY_MAX_LINE_LENGTH = 100
 
-# Default dictionary with all values set to False
-default_rules_output_status = {
-    'empty_message': False,
-    'error_body_format': False,
-    'error_body_length': False,
-    'error_scope_capitalization': False,
-    'error_scope_format': False,
-    'error_summary_capitalization': False,
-    'error_summary_length': False,
-    'error_summary_period': False,
-    'error_type': False,
-    'missing_colon': False,
-}
-
 
 # Dynamic test naming based on the commit message
 def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
@@ -77,6 +63,21 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
             # Expected PASS: 'summary' starts with lowercase
             'change(rom): this message starts with lowercase',
             {},
+        ),
+        (
+            # Expected FAIL: Message without scope with exclamation mark
+            'change!: This is commit message without scope but with exclamation mark',
+            {'error_breaking': True},
+        ),
+        (
+            # Expected FAIL: Message with scope with exclamation mark
+            'change(rom)!: This is commit message with scope and with exclamation mark',
+            {'error_breaking': True},
+        ),
+        (
+            # Expected FAIL: Message with scope with 2 exclamation marks
+            'change(rom)!!: This is commit message with !!',
+            {'error_type': True},
         ),
         (
             # Expected FAIL: missing colon between 'type' (and 'scope') and 'summary'
@@ -162,13 +163,13 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
     # Use the commit message to generate IDs for each test case
     ids=commit_message_id,
 )
-def commit_message(request):
+def commit_message(request, default_rules_output_status):
     # Combine the default dictionary with the test-specific dictionary
     combined_output = {**default_rules_output_status, **request.param[1]}
     return request.param[0], combined_output
 
 
-def test_commit_message(commit_message):  # pylint: disable=redefined-outer-name
+def test_commit_message(commit_message, default_rules_output_status):  # pylint: disable=redefined-outer-name
     message_text, expected_output = commit_message
 
     # Reset rules_output_status to its default state before each test case
