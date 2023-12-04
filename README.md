@@ -74,7 +74,7 @@ minimum_pre_commit_version: 3.3.0
 default_install_hook_types: [pre-commit,commit-msg]
 ...
 ```
-After modifying `.pre-commit-config.yaml`, re-run the install command (`pre-commit install`) for changes to take effect.
+After modifying `.pre-commit-config.yaml`, re-run the installation command (`pre-commit install`) for changes to take effect.
 
 ---
 
@@ -87,6 +87,7 @@ The linter accepts several configurable parameters to tailor commit message vali
 - `--subject-max-length`: Set the maximum length for the summary (default: `72`).
 - `--body-max-line-length`: Set the maximum line length for the body (default: `100`).
 - `--summary-uppercase`: Enforce the summary to start with an uppercase letter (default: `disabled`).
+- `--allow-breaking`: Allow exclamation mark in the commit type (default: `false`).
 
 The **custom configuration** can be specified in `.pre-commit-config.yaml` like this:
 ```yaml

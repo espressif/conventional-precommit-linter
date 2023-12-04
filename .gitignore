@@ -4,3 +4,5 @@ __pycache__/
 *.egg*
 test_message.txt
 .coverage
+.vscode
+venv
