@@ -129,6 +129,11 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
             {'error_type': True},
         ),
         (
+            # Expected Fail: partial type
+            'chan: This is commit message with partial type',
+            {'error_type': True},
+        ),
+        (
             # Expected FAIL: missing blank line between 'summary' and 'body'
             'change: Added new feature with change\nThis feature adds functionality',
             {'error_body_format': True},
