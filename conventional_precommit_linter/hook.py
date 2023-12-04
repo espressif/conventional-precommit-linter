@@ -11,6 +11,7 @@ from .helpers import _color_grey
 from .helpers import _color_orange
 from .helpers import _color_purple
 
+DEFAULT_TYPES = ['change', 'ci', 'docs', 'feat', 'fix', 'refactor', 'remove', 'revert']
 
 rules_output_status = {
     'empty_message': False,
@@ -28,16 +29,15 @@ rules_output_status = {
 
 
 def get_allowed_types(args: argparse.Namespace) -> List[str]:
-    default_types = ['change', 'ci', 'docs', 'feat', 'fix', 'refactor', 'remove', 'revert']
     # Provided types take precedence over default types
-    types: List[str] = args.types[0].split(',') if args.types else default_types
-    return types
+    types: List[str] = args.types[0].split(',') if args.types else DEFAULT_TYPES
+    return [commit_type.strip() for commit_type in types]
 
 
 def get_allowed_scopes(args: argparse.Namespace) -> List[str]:
     default_scopes: List[str] = []
     scopes: List[str] = args.scopes[0].split(',') if args.scopes else default_scopes
-    return scopes
+    return [scope.strip() for scope in scopes]
 
 
 def read_commit_message(file_path: str) -> str:
