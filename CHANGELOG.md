@@ -1,3 +1,13 @@
+## v1.4.0 (2023-12-04)
+
+
+- feat(scope): add optional restriction to available scopes
+- ci: update commitizen auto release message
+- - update actions version pytest.yml workflow
+- docs: update thumbnails example messages
+- change(output): coloring only keywords in output
+- change: release v1.3.0
+
 ## v1.3.0 (2023-11-09)
 
 
