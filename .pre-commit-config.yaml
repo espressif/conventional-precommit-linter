@@ -39,3 +39,9 @@ repos:
     rev: '23.7.0'
     hooks:
     -   id: black                                        # Formats Python code using black
+
+  - repo: https://github.com/espressif/conventional-precommit-linter
+    rev: v1.4.0
+    hooks:
+      - id: conventional-precommit-linter
+        stages: [commit-msg]
