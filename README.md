@@ -19,10 +19,11 @@ The Conventional Precommit Linter is a tool designed to ensure commit messages f
   - [Installation](#installation)
   - [Install Commit-msg Hooks](#install-commit-msg-hooks)
 - [Configuration](#configuration)
-- [Contributing and Development](#contributing-and-development)
+- [Project issues](#project-issues)
+- [Contributing](#contributing)
 - [Credits](#credits)
 
-***
+---
 
 ## Getting Started
 
@@ -75,6 +76,7 @@ default_install_hook_types: [pre-commit,commit-msg]
 ```
 After modifying `.pre-commit-config.yaml`, re-run the install command (`pre-commit install`) for changes to take effect.
 
+---
 
 ## Configuration
 
@@ -101,56 +103,19 @@ The **custom configuration** can be specified in `.pre-commit-config.yaml` like 
         - --subject-min-length=10
 ```
 
-***
+---
 
-## Contributing and Development
+## Project issues
 
-We welcome contributions! To contribute to this repository, please follow these steps:
+If you encounter any issues, feel free to report them in the [project's issues](https://github.com/espressif/conventional-precommit-linter/issues) or create Pull Request with your suggestion.
 
-1. **Clone the Project**: Clone the repository to your local machine using:
-    ```sh
-    git clone https://github.com/espressif/conventional-precommit-linter.git
-    ```
+---
 
-2. **Set Up Development Environment:**
+## Contributing
 
-- Create and activate a virtual environment:
-  ```sh
-  virtualenv venv -p python3.8 && source ./venv/bin/activate
-  ```
-  or
-  ```sh
-  python -m venv venv && source ./venv/bin/activate
-  ```
+📘 If you are interested in contributing to this project, see the [project Contributing Guide](CONTRIBUTING.md).
 
-- Install the project and development dependencies:
-  ```sh
-  pip install -e '.[dev]'
-  ```
-
-3. **Testing Your Changes:**
-
-- Create a file named `test_message.txt` in the root of the repository (this file is git-ignored) and place an example commit message in it.
-
-- Run the tool to lint the message:
-  ```sh
-    python -m conventional_precommit_linter.hook test_message.txt
-  ```
-
-  ... or with arguments:
-  ```sh
-  python -m conventional_precommit_linter.hook test_message.txt --subject-min-length="12" --subject-max-length="55" --body-max-line-length="88" --types="feat,change,style" --scopes="bt,wifi,ethernet"
-  ```
-
-
-Before submitting a pull request, ensure your changes pass all the tests. You can run the test suite with the following command:
-```sh
-pytest
-```
-
-Please also adhere to the Conventional Commits standard when writing your commit messages for this project.
-
-***
+---
 
 ## Credits
 Inspired by project: https://github.com/compilerla/conventional-pre-commit

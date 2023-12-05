@@ -20,3 +20,5 @@ jobs:
       uses: espressif/shared-github-dangerjs@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        instructions-contributions-file: 'CONTRIBUTING.md'
