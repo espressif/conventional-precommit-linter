@@ -1,3 +1,9 @@
+## v1.4.1 (2023-12-09)
+
+
+- fix: fix partial type matching
+- Closes https://github.com/espressif/conventional-precommit-linter/issues/11
+
 ## v1.4.0 (2023-12-04)
 
 
@@ -6,7 +12,6 @@
 - - update actions version pytest.yml workflow
 - docs: update thumbnails example messages
 - change(output): coloring only keywords in output
-- change: release v1.3.0
 
 ## v1.3.0 (2023-11-09)
 
@@ -27,20 +32,17 @@
 
 
 - Ignore comment lines from linted commit message (#5)
-- * fix: Ignore # lines from linted commit message
-
-* feat: Add hint for preserving commit message to output report
-
-* fix: Allow in scope special characters  " _ / . , * -"
+- fix: Ignore # lines from linted commit message
+- feat: Add hint for preserving commit message to output report
+- fix: Allow in scope special characters  " _ / . , * -"
 - docs: Update hook install process guide (#4)
 
 ## v1.1.0 (2023-06-27)
 
 
 - Update default rules (#3)
-- * change(rules): Set maximum summary length to 72 characters
-
-* change(rules): Summary uppercase letter as optional rules
+- change(rules): Set maximum summary length to 72 characters
+- change(rules): Summary uppercase letter as optional rules
 - docs: Update argument usage example in README.md
 
 ## v1.0.0 (2023-06-21)
