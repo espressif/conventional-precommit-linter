@@ -1,3 +1,11 @@
+## v1.5.0 (2023-12-15)
+
+
+- feat: add support for optional `!` in scope
+- Closes https://github.com/espressif/conventional-precommit-linter/issues/12
+- docs: add CONTRIBUTING Guide
+- ci: add PR linter Danger
+
 ## v1.4.1 (2023-12-09)
 
 
@@ -9,7 +17,7 @@
 
 - feat(scope): add optional restriction to available scopes
 - ci: update commitizen auto release message
-- - update actions version pytest.yml workflow
+- update actions version pytest.yml workflow
 - docs: update thumbnails example messages
 - change(output): coloring only keywords in output
 
@@ -19,7 +27,7 @@
 - fix: commitizen versions settings in pyproject.toml
 - change(user-output): update user output marking all issues with message - Dynamic messages in output report - Color input commit message same as message elements - Tests updated
 - ci: update project settings configuration (pyproject.toml)
-- - add CHANGELOG.md, commitizen, test packages definitions
+- add CHANGELOG.md, commitizen, test packages definitions
 - GitHub action - testing on multiple OSes
 
 ## v1.2.1 (2023-07-31)
