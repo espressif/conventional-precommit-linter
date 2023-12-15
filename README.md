@@ -81,7 +81,7 @@ After modifying `.pre-commit-config.yaml`, re-run the installation command (`pre
 ## Configuration
 
 The linter accepts several configurable parameters to tailor commit message validation:
-- `--types`: Define the types of commits allowed (default: [`change`, `ci`, `docs`, `feat`, `fix`, `refactor`, `remove`, `revert`]).
+- `--types`: Define the types of commits allowed (default: [`change`, `ci`, `docs`, `feat`, `fix`, `refactor`, `remove`, `revert`, `test`]).
 - `--scopes`: Specifies a list of allowed scopes. If not defined, all scopes are allowed (restriction is `disabled`).
 - `--subject-min-length`: Set the minimum length for the summary (default: `20`).
 - `--subject-max-length`: Set the maximum length for the summary (default: `72`).

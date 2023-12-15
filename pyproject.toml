@@ -116,6 +116,7 @@
             "refactor",
             "remove",
             "revert",
+            "test",
         ]
         example = "change: this is a custom change type"
         message_template = "{% if scope %}{{change_type}}({{scope}}): {{message}}{% else %}{{change_type}}: {{message}}{% endif %}{% if body %}\n\n{{body}}{% endif %}{% if is_breaking_change %}\n\nBREAKING CHANGE{% endif %}{% if footer %}\n\n{{footer}}{% endif %}"
@@ -132,6 +133,7 @@
                 { value = "refactor", name = "refactor: A code change that neither fixes a bug nor adds a feature." },
                 { value = "remove", name = "remove: Removing code or files." },
                 { value = "revert", name = "revert: Revert to a commit." },
+                { value = "test", name = "test: Test script changes." },
             ]
             message = "Select the TYPE of change you are committing"
             name = "change_type"
