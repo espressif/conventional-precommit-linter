@@ -6,7 +6,7 @@ from conventional_precommit_linter.hook import main
 from conventional_precommit_linter.hook import rules_output_status
 
 # Default values for the commit message format
-TYPES = 'change, ci, docs, feat, fix, refactor, remove, revert'
+TYPES = 'change, ci, docs, feat, fix, refactor, remove, revert, test'
 SUBJECT_MIN_LENGTH = 20
 SUBJECT_MAX_LENGTH = 72
 BODY_MAX_LINE_LENGTH = 100
@@ -22,6 +22,11 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
         (
             # Expected PASS: Message with scope and body
             'feat(bootloader): This is commit message with scope and body\n\nThis is a text of body',
+            {},
+        ),
+        (
+            # Expected PASS: Message with scope and body, type "test"
+            'test(sync-script): This is commit message with scope and type test\n\nThis is a text of body',
             {},
         ),
         (

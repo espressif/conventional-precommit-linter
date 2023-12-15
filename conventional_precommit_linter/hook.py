@@ -11,7 +11,7 @@ from .helpers import _color_grey
 from .helpers import _color_orange
 from .helpers import _color_purple
 
-DEFAULT_TYPES = ['change', 'ci', 'docs', 'feat', 'fix', 'refactor', 'remove', 'revert']
+DEFAULT_TYPES = ['change', 'ci', 'docs', 'feat', 'fix', 'refactor', 'remove', 'revert', 'test']
 
 rules_output_status = {
     'empty_message': False,
