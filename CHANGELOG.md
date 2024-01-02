@@ -1,3 +1,8 @@
+## v1.6.0 (2024-01-02)
+
+
+- change(default-types): add "test:" to default commit types
+
 ## v1.5.0 (2023-12-15)
 
 
