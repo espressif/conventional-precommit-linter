@@ -208,7 +208,7 @@ def print_report(commit_type: str, commit_scope: Optional[str], commit_summary: 
     """
     print(full_guide_message)
     print(
-        f'👉 To preserve and correct a commit message, run: {_color_bold_green("git commit --edit --file=.git/COMMIT_EDITMSG")}'
+        f'👉 To preserve and correct a commit message, run: {_color_bold_green("git commit --edit --file=$(git rev-parse --git-dir)/COMMIT_EDITMSG")}\n'
     )
 
 
@@ -247,7 +247,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     if not check_colon_after_type(message_title):
         print(f'❌ Missing colon after {_color_purple("<type>")} or {_color_blue("(<optional-scope>)")}.')
         print(
-            f'\nEnsure the commit message has the format \"{_color_purple("<type>")}{_color_blue("(<optional-scope>)")}: {_color_orange("<summary>")}\"'
+            f'\nEnsure the commit message has the format "{_color_purple("<type>")}{_color_blue("(<optional-scope>)")}: {_color_orange("<summary>")}"'
         )
         return 1
 
