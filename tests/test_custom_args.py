@@ -57,7 +57,7 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
         ),
         (
             # Expected PASS: Message without scope, with body
-            'change: This is commit message without scope with body\n\nThis is a text of body\n# Please enter the commit message for your changes. Lines starting\n# with \'#\' will be ignored, and an empty message aborts the commit.\n#',
+            "change: This is commit message without scope with body\n\nThis is a text of body\n# Please enter the commit message for your changes. Lines starting\n# with '#' will be ignored, and an empty message aborts the commit.\n#",
             {},
         ),
         (
