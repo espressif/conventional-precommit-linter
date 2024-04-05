@@ -1,3 +1,11 @@
+## v1.7.0 (2024-04-05)
+
+
+- change: update output message for help command (works with "git worktree")
+- - docs: updated README file - usage, tip for git alias
+- ci: replace Black formatter by Ruff formatter
+- - removed linting tools from dev dependencies
+
 ## v1.6.0 (2024-01-02)
 
 
