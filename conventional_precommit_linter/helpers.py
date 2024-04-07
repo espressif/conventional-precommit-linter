@@ -23,3 +23,11 @@ def _color_blue(text: str) -> str:
 
 def _color_grey(text: str) -> str:
     return f'{Fore.LIGHTBLACK_EX}{text}{Style.RESET_ALL}'
+
+
+def _color_red(text: str) -> str:
+    return f'{Fore.RED}{text}{Style.RESET_ALL}'
+
+
+def _color_green(text: str) -> str:
+    return f'{Fore.GREEN}{text}{Style.RESET_ALL}'
