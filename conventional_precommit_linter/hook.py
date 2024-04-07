@@ -7,9 +7,11 @@ from typing import Tuple
 
 from .helpers import _color_blue
 from .helpers import _color_bold_green
+from .helpers import _color_green
 from .helpers import _color_grey
 from .helpers import _color_orange
 from .helpers import _color_purple
+from .helpers import _color_red
 
 DEFAULT_TYPES = ['change', 'ci', 'docs', 'feat', 'fix', 'refactor', 'remove', 'revert', 'test']
 
@@ -138,7 +140,7 @@ def check_body_lines_length(message_body: List[str], args: argparse.Namespace) -
 
 def _get_icon_for_rule(status: bool) -> str:
     """Return a icon depending on the status of the rule (True = error found, False = success))"""
-    return '❌' if status else '✔️ '
+    return f'{ _color_red("FAIL:")}' if status else f'{_color_green("OK:  ")}'
 
 
 def print_report(commit_type: str, commit_scope: Optional[str], commit_summary: str, args) -> None:
@@ -196,7 +198,7 @@ def print_report(commit_type: str, commit_scope: Optional[str], commit_summary: 
     # Combine the rule messages into the final report block
     message_rules_block = '    ' + '\n        '.join(rule_messages)
 
-    full_guide_message = f"""\n❌ INVALID COMMIT MESSAGE: {commit_message}
+    full_guide_message = f"""\n {_color_red("FAIL: ")}INVALID COMMIT MESSAGE: {commit_message}
     _______________________________________________________________
     Commit message structure:  {_color_purple('<type>')}{_color_blue("(<optional-scope>)")}: {_color_orange('<summary>')}
                                 <... empty line ...>
@@ -208,7 +210,7 @@ def print_report(commit_type: str, commit_scope: Optional[str], commit_summary: 
     """
     print(full_guide_message)
     print(
-        f'👉 To preserve and correct a commit message, run: {_color_bold_green("git commit --edit --file=$(git rev-parse --git-dir)/COMMIT_EDITMSG")}\n'
+        f'TIP: To preserve and correct a commit message, run: {_color_bold_green("git commit --edit --file=$(git rev-parse --git-dir)/COMMIT_EDITMSG")}\n'
     )
 
 
@@ -237,7 +239,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     input_commit_message = read_commit_message(args.input)
 
     if not input_commit_message.strip():
-        print('❌ Commit message seems to be empty.')
+        print('FAIL: Commit message seems to be empty.')
         return 1
 
     message_lines = input_commit_message.strip().split('\n')  # Split the commit message into lines
@@ -245,7 +247,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     message_body = message_lines[1:]  # The body is everything after the summary, if it exists
 
     if not check_colon_after_type(message_title):
-        print(f'❌ Missing colon after {_color_purple("<type>")} or {_color_blue("(<optional-scope>)")}.')
+        print(f'FAIL: Missing colon after {_color_purple("<type>")} or {_color_blue("(<optional-scope>)")}.')
         print(
             f'\nEnsure the commit message has the format "{_color_purple("<type>")}{_color_blue("(<optional-scope>)")}: {_color_orange("<summary>")}"'
         )
