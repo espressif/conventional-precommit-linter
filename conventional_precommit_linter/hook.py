@@ -210,7 +210,7 @@ def print_report(commit_type: str, commit_scope: Optional[str], commit_summary: 
     """
     print(full_guide_message)
     print(
-        f'TIP: To preserve and correct a commit message, run: {_color_bold_green("git commit --edit --file=$(git rev-parse --git-dir)/COMMIT_EDITMSG")}\n'
+        f'To preserve and correct a commit message, run: {_color_bold_green("git commit --edit --file=$(git rev-parse --git-dir)/COMMIT_EDITMSG")}\n'
     )
 
 
