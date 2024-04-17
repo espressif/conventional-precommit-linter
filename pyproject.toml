@@ -57,13 +57,13 @@
             "ungrouped-imports",             # C0412: Imports should be grouped by packages
         ]
     [tool.pylint.'FORMAT']
-        max-line-length = 120 # Specifies the maximum line length for pylint checks
+        max-line-length = 160 # Specifies the maximum line length for pylint checks
 
 [tool.ruff]
-    ignore = [
+    line-length = 160 # Specifies the maximum line length for ruff checks
+    lint.ignore = [
         "E501", # line-too-long
     ]
-    line-length = 120 # Specifies the maximum line length for ruff checks
     lint.select = ['E', 'F', 'W'] # Types of issues ruff should check for
     target-version = "py38" # Specifies the target Python version for ruff checks
 
