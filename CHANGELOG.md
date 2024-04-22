@@ -1,10 +1,18 @@
+## v1.8.0 (2024-04-22)
+
+
+- fix(output-message): fixes presence bang/breaking change in output message
+- Closes https://github.com/espressif/conventional-precommit-linter/issues/24
+- fix: unicode issues when utf-8 encoding is not set in system
+- Closes https://github.com/espressif/conventional-precommit-linter/issues/22
+
 ## v1.7.0 (2024-04-05)
 
 
 - change: update output message for help command (works with "git worktree")
-- - docs: updated README file - usage, tip for git alias
+- docs: updated README file - usage, tip for git alias
 - ci: replace Black formatter by Ruff formatter
-- - removed linting tools from dev dependencies
+- removed linting tools from dev dependencies
 
 ## v1.6.0 (2024-01-02)
 
