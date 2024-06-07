@@ -43,10 +43,10 @@ Each component is checked for compliance with the provided or default configurat
 
 If your commit message does not meet the required format, the hook will fail, producing a **report that shows which part of your commit message needs correction**:
 
-<img src="docs/example-output-default-args.jpg" width="800">
+<img src="docs/example-output-default-args.png" width="800">
 
 For a custom configuration, the report might look like this:
-<img src="docs/example-output-custom-args.jpg" width="800">
+<img src="docs/example-output-custom-args.png" width="800">
 
 The hint message suggests that you can preserve your original message and simply edit it in your default editor, without the need to type the whole message again.
 
@@ -109,6 +109,7 @@ The linter accepts several configurable parameters to tailor commit message vali
 
 - `--types`: Define the types of commits allowed (default: [`change`, `ci`, `docs`, `feat`, `fix`, `refactor`, `remove`, `revert`, `test`]).
 - `--scopes`: Specifies a list of allowed scopes. If not defined, all scopes are allowed (restriction is `disabled`).
+- `--scope-case-insensitive`: Allows uppercase letters in scope.
 - `--subject-min-length`: Set the minimum length for the summary (default: `20`).
 - `--subject-max-length`: Set the maximum length for the summary (default: `72`).
 - `--body-max-line-length`: Set the maximum line length for the body (default: `100`).

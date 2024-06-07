@@ -186,11 +186,7 @@ def test_commit_message(commit_message, default_rules_output_status):  # pylint:
         temp.write(message_text)
         temp_file_name = temp.name
 
-    # Run the main function of your script with the temporary file
-    try:
-        main([temp_file_name])  # Pass the file name as a positional argument
-    finally:
-        temp.close()  # Clean up the temporary file after the test
+    main([temp_file_name])  # Pass the file name as a positional argument
 
     # Retrieve the actual rules_output_status after running the main function
     actual_output = rules_output_status

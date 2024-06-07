@@ -103,6 +103,9 @@ def check_allowed_types(commit_type: str, args: argparse.Namespace) -> None:
 def check_scope(commit_scope: str, args: argparse.Namespace) -> None:
     """Check for scope capitalization and allowed characters"""
     regex_scope = r'^[a-z0-9_/.,*-]*$'
+    if args.scope_case_insensitive:
+        regex_scope = r'^[a-zA-Z0-9_/.,*-]*$'  # adds A-Z to the allowed character set
+
     if commit_scope and not re.match(regex_scope, commit_scope):
         rules_output_status['error_scope_capitalization'] = True
 
@@ -171,16 +174,22 @@ def print_report(commit_type: str, commit_scope: Optional[str], commit_summary: 
     rule_messages.append(
         f"{_get_icon_for_rule(rules_output_status['error_scope_format'])} {_color_blue('(<optional-scope>)')} if used, must be enclosed in parentheses"
     )
-    rule_messages.append(
-        f"{_get_icon_for_rule(rules_output_status['error_scope_capitalization'])} {_color_blue('(<optional-scope>)')} if used, must be written in lower case without whitespace"
-    )
+
+    if args.scope_case_insensitive:
+        rule_messages.append(
+            f"{_get_icon_for_rule(rules_output_status['error_scope_capitalization'])} {_color_blue('(<optional-scope>)')} if used, must not contain whitespace"
+        )
+    else:
+        rule_messages.append(
+            f"{_get_icon_for_rule(rules_output_status['error_scope_capitalization'])} {_color_blue('(<optional-scope>)')} if used, must be written in lower case without whitespace"
+        )
     if args.scopes:
         rule_messages.append(
             f"{_get_icon_for_rule(rules_output_status['error_scope_allowed'])} {_color_blue('(<optional-scope>)')} if used, must be one of the following allowed scopes: [{_color_blue(', '.join(args.scopes))}]"
         )
 
     # SUMMARY messages
-    rule_messages.append(f"{_get_icon_for_rule(rules_output_status['error_summary_period'])} {_color_orange('<summary>')} must not end with a period")
+    rule_messages.append(f"{_get_icon_for_rule(rules_output_status['error_summary_period'])} {_color_orange('<summary>')} must not end with a period '.'")
     rule_messages.append(
         f"{_get_icon_for_rule(rules_output_status['error_summary_length'])} {_color_orange('<summary>')} must be between {args.subject_min_length} and {args.subject_max_length} characters long"
     )
@@ -222,6 +231,7 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
     parser.add_argument('--subject-max-length', type=int, default=72, help="Maximum length of the 'Summary'")
     parser.add_argument('--body-max-line-length', type=int, default=100, help="Maximum length of the 'Body' line")
     parser.add_argument('--summary-uppercase', action='store_true', help="'Summary' must start with an uppercase letter")
+    parser.add_argument('--scope-case-insensitive', action='store_true', help='Allow uppercase letters in the optional scope.')
     parser.add_argument('--allow-breaking', action='store_true', help='Allow exclamation mark in the commit type')
     parser.add_argument('input', type=str, help='A file containing a git commit message')
     return parser.parse_args(argv)
