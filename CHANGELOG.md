@@ -1,3 +1,9 @@
+## v1.9.0 (2024-06-13)
+
+
+- feat: Add '--scope-case-insensitive' optional argument
+- Closes https://github.com/espressif/conventional-precommit-linter/issues/25
+
 ## v1.8.0 (2024-04-22)
 
 
