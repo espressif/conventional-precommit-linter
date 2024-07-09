@@ -252,6 +252,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     message_title = message_lines[0]  # The summary is the first line
     message_body = message_lines[1:]  # The body is everything after the summary, if it exists
 
+    # Skip message lining if the commit message is 'fixup!' or 'squash!' (will not stay in git history anyway)
+    if re.match(r'^(fixup|squash)', message_title):
+        return 0
+
     if not check_colon_after_type(message_title):
         print(f'FAIL: Missing colon after {_color_purple("<type>")} or {_color_blue("(<optional-scope>)")}.')
         print(f'\nEnsure the commit message has the format "{_color_purple("<type>")}{_color_blue("(<optional-scope>)")}: {_color_orange("<summary>")}"')

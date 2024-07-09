@@ -70,6 +70,16 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
             {},
         ),
         (
+            # Expected PASS: FIXUP Message with scope and body
+            'fixup! feat(bootloader): This is fixup commit message with scope and body\n\nThis is a text of body',
+            {},
+        ),
+        (
+            # Expected PASS: SQUASH Message with scope and body
+            'squash! feat(bootloader): This is fixup commit message with scope and body\n\nThis is a text of body',
+            {},
+        ),
+        (
             # Expected FAIL: Message without scope with exclamation mark
             'change!: This is commit message without scope but with exclamation mark',
             {'error_breaking': True},

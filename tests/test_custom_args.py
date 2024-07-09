@@ -125,6 +125,18 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
             get_argv_list(),
         ),
         (
+            # Expected PASS: FIXUP Message with scope and body
+            'fixup! feat(bootloader): This is fixup commit message with scope and body\n\nThis is a text of body',
+            {},
+            get_argv_list(),
+        ),
+        (
+            # Expected PASS: SQUASH Message with scope and body
+            'squash! feat(bootloader): This is fixup commit message with scope and body\n\nThis is a text of body',
+            {},
+            get_argv_list(),
+        ),
+        (
             # Expected FAIL: Message with scope with 2 exclamation marks
             'change(rom)!!: This is commit message with 2 exclamations',
             {'error_type': True},
