@@ -1,3 +1,11 @@
+## v1.10.0 (2024-07-24)
+
+
+- ci: update versions of GH actions in GH workflows
+- ci: add CODEOWNERS file, removed unused config files
+- feat: handle fixup and squash messages
+- ci(danger-github-action): limit more permission for workflow file
+
 ## v1.9.0 (2024-06-13)
 
 
