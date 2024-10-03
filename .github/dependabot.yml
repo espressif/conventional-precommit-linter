@@ -1,0 +1,42 @@
+---
+version: 2
+
+updates:
+  - package-ecosystem: pip
+    versioning-strategy: increase-if-necessary # Only increase the version if necessary (instead always latest)
+    directory: '/' # The directory where Dependabot should look for pip dependencies.
+    # schedule: { interval: weekly, day: sunday, time: '09:00' } # UTC
+    schedule: { interval: daily, time: '09:00' } # UTC
+    open-pull-requests-limit: 0 #  Disables PRs for version-updates, only security updates
+    groups:
+      # pip-version-updates: # (disabled)
+      #   applies-to: version-updates
+      #   patterns: ['*']
+      #   update-types: [major, minor, patch]
+      pip-security-updates:
+        applies-to: security-updates
+        patterns: ['*']
+        update-types: [major, minor, patch] # All types in same group (same PR)
+    commit-message: { prefix: 'ci(deps-pip): [skip ci]' } # Commit message prefix; [skip ci] disables GitHub workflows
+    reviewers: ['tomassebestik'] # the CI team Espressif GitHub organization
+    labels: ['dependencies', 'Status: Reviewing'] # Labels automatically added to the pull request
+    pull-request-branch-name: { separator: '-' } # Separator for PR branch names
+
+  - package-ecosystem: github-actions
+    open-pull-requests-limit: 0 # Only security updates
+    directory: '/'
+    # schedule: { interval: weekly, day: sunday, time: '09:00' } # UTC
+    schedule: { interval: daily, time: '09:00' } # UTC
+    groups:
+      # github-actions-version-updates: # (disabled)
+      #   applies-to: version-updates
+      #   patterns: ['*']
+      #   update-types: [major, minor, patch]
+      github-actions-security-updates:
+        applies-to: security-updates
+        patterns: ['*']
+        update-types: [major, minor, patch]
+    commit-message: { prefix: 'ci(deps-gh-actions): [skip ci]' }
+    reviewers: ['tomassebestik']
+    labels: ['dependencies', 'Status: Reviewing']
+    pull-request-branch-name: { separator: '-' }
