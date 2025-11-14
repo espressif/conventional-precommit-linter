@@ -262,6 +262,12 @@ def commit_message_id(commit_message):  # pylint: disable=redefined-outer-name
             {'error_summary_period': True},
             get_argv_list(scope_case_insensitive_arg=True),
         ),
+        (
+            # Expected PASS: Message with scissor line and diff content that should be ignored
+            'fix(bt): Update database configuration\n\nThis change updates the database configuration for better performance.\n# Please enter the commit message for your changes.\n# Lines starting with \'#\' will be ignored.\n#\n# On branch feature-branch\n# Changes to be committed:\n#\tnew file:   src/config.js\n#\tmodified:   package.json\n#\n# ------------------------ >8 ------------------------\n# Do not modify or remove the line above.\n# Everything below it will be ignored.\ndiff --git a/src/config.js b/src/config.js\nnew file mode 100644\nindex 0000000..1234567\n--- /dev/null\n+++ b/src/config.js\n@@ -0,0 +1,5 @@\n+module.exports = { database: { host: "averylonglinethatwouldbreaknormallybutthisshouldbeignored" } };',
+            {},
+            get_argv_list(),
+        ),
     ],
     # Use the commit message to generate IDs for each test case
     ids=commit_message_id,

@@ -46,6 +46,16 @@ def get_allowed_scopes(args: argparse.Namespace) -> List[str]:
 def read_commit_message(file_path: str) -> str:
     with open(file_path, encoding='utf-8') as file:
         lines = file.readlines()
+
+        scissor_line_index = None
+        for i, line in enumerate(lines):
+            if line.strip() == '# ------------------------ >8 ------------------------':
+                scissor_line_index = i
+                break
+
+        if scissor_line_index is not None:
+            lines = lines[:scissor_line_index]
+
         lines = [line for line in lines if not line.startswith('#')]  # Remove comment lines (starting with '#')
         content = ''.join(lines)
         if not content.strip():
