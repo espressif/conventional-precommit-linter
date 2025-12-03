@@ -1,3 +1,9 @@
+## v1.11.0 (2025-12-03)
+
+
+- fix: handle git scissor line in commit message parsing
+- ci(dependabot): add dependabot configuration to the repository
+
 ## v1.10.0 (2024-07-24)
 
 
